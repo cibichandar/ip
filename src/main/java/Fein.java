@@ -1,6 +1,8 @@
 import java.util.Scanner;
 
+/** A simple command-line task manager. */
 public class Fein {
+    /** Starts Fein and processes commands until the user enters {@code bye}. */
     public static void main(String[] args) {
         String separator = "_".repeat(100);
         String banner = "oooooooooooo           o8o                     \n"
@@ -19,6 +21,7 @@ public class Fein {
 
         Scanner scanner = new Scanner(System.in);
         String[] tasks = new String[100];
+        boolean[] completed = new boolean[100];
         int taskCount = 0;
 
         while (true) {
@@ -33,9 +36,13 @@ public class Fein {
             }
 
             if (command.equals("list")) {
+                System.out.println(" Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println(" " + (i + 1) + ". " + tasks[i]);
+                    String status = completed[i] ? "X" : " ";
+                    System.out.println(" " + (i + 1) + ".[" + status + "] " + tasks[i]);
                 }
+            } else if (command.startsWith("mark ")) {
+                markTask(command, tasks, completed, taskCount);
             } else {
                 tasks[taskCount] = command;
                 taskCount++;
@@ -43,6 +50,24 @@ public class Fein {
             }
 
             System.out.println(separator);
+        }
+    }
+
+    /** Marks the numbered task as complete and prints a confirmation. */
+    private static void markTask(String command, String[] tasks, boolean[] completed, int taskCount) {
+        try {
+            int taskNumber = Integer.parseInt(command.substring("mark ".length()).trim());
+            if (taskNumber < 1 || taskNumber > taskCount) {
+                System.out.println(" That task does not exist.");
+                return;
+            }
+
+            int taskIndex = taskNumber - 1;
+            completed[taskIndex] = true;
+            System.out.println(" Nice! I've marked this task as done:");
+            System.out.println("   [X] " + tasks[taskIndex]);
+        } catch (NumberFormatException exception) {
+            System.out.println(" Please provide a valid task number.");
         }
     }
 }
