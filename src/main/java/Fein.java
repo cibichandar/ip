@@ -43,6 +43,8 @@ public class Fein {
                 }
             } else if (command.startsWith("mark ")) {
                 markTask(command, tasks, completed, taskCount);
+            } else if (command.startsWith("unmark ")) {
+                unmarkTask(command, tasks, completed, taskCount);
             } else {
                 tasks[taskCount] = command;
                 taskCount++;
@@ -66,6 +68,24 @@ public class Fein {
             completed[taskIndex] = true;
             System.out.println(" Nice! I've marked this task as done:");
             System.out.println("   [X] " + tasks[taskIndex]);
+        } catch (NumberFormatException exception) {
+            System.out.println(" Please provide a valid task number.");
+        }
+    }
+
+    /** Marks the numbered task as not complete and prints a confirmation. */
+    private static void unmarkTask(String command, String[] tasks, boolean[] completed, int taskCount) {
+        try {
+            int taskNumber = Integer.parseInt(command.substring("unmark ".length()).trim());
+            if (taskNumber < 1 || taskNumber > taskCount) {
+                System.out.println(" That task does not exist.");
+                return;
+            }
+
+            int taskIndex = taskNumber - 1;
+            completed[taskIndex] = false;
+            System.out.println(" OK, I've marked this task as not done yet:");
+            System.out.println("   [ ] " + tasks[taskIndex]);
         } catch (NumberFormatException exception) {
             System.out.println(" Please provide a valid task number.");
         }
