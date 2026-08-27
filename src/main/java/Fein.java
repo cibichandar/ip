@@ -40,7 +40,7 @@ public class Fein {
             if (command.equals("list")) {
                 System.out.println(" Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println(" " + (i + 1) + "." + tasks[i].toDisplayString());
+                    System.out.println(" " + (i + 1) + "." + tasks[i]);
                 }
             } else if (command.startsWith("mark ")) {
                 markTask(command, tasks, taskCount);
@@ -50,7 +50,7 @@ public class Fein {
                 tasks[taskCount] = createTask(command);
                 taskCount++;
                 System.out.println(" Got it. I've added this task:");
-                System.out.println("   " + tasks[taskCount - 1].toDisplayString());
+                System.out.println("   " + tasks[taskCount - 1]);
                 System.out.println(" Now you have " + taskCount + " tasks in the list.");
             }
 
@@ -92,7 +92,7 @@ public class Fein {
             int taskIndex = taskNumber - 1;
             tasks[taskIndex].markAsDone();
             System.out.println(" Nice! I've marked this task as done:");
-            System.out.println("   " + tasks[taskIndex].toDisplayString());
+            System.out.println("   " + tasks[taskIndex]);
         } catch (NumberFormatException exception) {
             System.out.println(" Please provide a valid task number.");
         }
@@ -110,7 +110,7 @@ public class Fein {
             int taskIndex = taskNumber - 1;
             tasks[taskIndex].markAsNotDone();
             System.out.println(" OK, I've marked this task as not done yet:");
-            System.out.println("   " + tasks[taskIndex].toDisplayString());
+            System.out.println("   " + tasks[taskIndex]);
         } catch (NumberFormatException exception) {
             System.out.println(" Please provide a valid task number.");
         }
