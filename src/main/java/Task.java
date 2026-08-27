@@ -31,4 +31,14 @@ public class Task {
     public String getDescription() {
         return description;
     }
+
+    /** Returns the one-letter kind marker used when displaying this task. */
+    public String getTypeIcon() {
+        return "T";
+    }
+
+    /** Returns the task in the format used by the list command. */
+    public String toDisplayString() {
+        return "[" + getTypeIcon() + "][" + getStatusIcon() + "] " + description;
+    }
 }

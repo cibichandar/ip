@@ -24,6 +24,9 @@ public class Fein {
         int taskCount = 0;
 
         while (true) {
+            if (!scanner.hasNextLine()) {
+                break;
+            }
             String command = scanner.nextLine();
 
             System.out.println(separator);
@@ -37,21 +40,44 @@ public class Fein {
             if (command.equals("list")) {
                 System.out.println(" Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println(" " + (i + 1) + ".[" + tasks[i].getStatusIcon() + "] "
-                            + tasks[i].getDescription());
+                    System.out.println(" " + (i + 1) + "." + tasks[i].toDisplayString());
                 }
             } else if (command.startsWith("mark ")) {
                 markTask(command, tasks, taskCount);
             } else if (command.startsWith("unmark ")) {
                 unmarkTask(command, tasks, taskCount);
             } else {
-                tasks[taskCount] = new Task(command);
+                tasks[taskCount] = createTask(command);
                 taskCount++;
-                System.out.println(" added: " + command);
+                System.out.println(" Got it. I've added this task:");
+                System.out.println("   " + tasks[taskCount - 1].toDisplayString());
+                System.out.println(" Now you have " + taskCount + " tasks in the list.");
             }
 
             System.out.println(separator);
         }
+    }
+
+    /** Creates the appropriate task subtype from a user command. */
+    private static Task createTask(String command) {
+        if (command.startsWith("deadline ")) {
+            String remainder = command.substring("deadline ".length());
+            int separator = remainder.indexOf(" /by ");
+            if (separator >= 0) {
+                return new Deadline(remainder.substring(0, separator),
+                        remainder.substring(separator + " /by ".length()));
+            }
+        } else if (command.startsWith("event ")) {
+            String remainder = command.substring("event ".length());
+            int fromSeparator = remainder.indexOf(" /from ");
+            int toSeparator = remainder.indexOf(" /to ");
+            if (fromSeparator >= 0 && toSeparator > fromSeparator) {
+                return new Event(remainder.substring(0, fromSeparator),
+                        remainder.substring(fromSeparator + " /from ".length(), toSeparator),
+                        remainder.substring(toSeparator + " /to ".length()));
+            }
+        }
+        return new Todo(command.startsWith("todo ") ? command.substring("todo ".length()) : command);
     }
 
     /** Marks the numbered task as complete and prints a confirmation. */
@@ -66,7 +92,7 @@ public class Fein {
             int taskIndex = taskNumber - 1;
             tasks[taskIndex].markAsDone();
             System.out.println(" Nice! I've marked this task as done:");
-            System.out.println("   [X] " + tasks[taskIndex].getDescription());
+            System.out.println("   " + tasks[taskIndex].toDisplayString());
         } catch (NumberFormatException exception) {
             System.out.println(" Please provide a valid task number.");
         }
@@ -84,7 +110,7 @@ public class Fein {
             int taskIndex = taskNumber - 1;
             tasks[taskIndex].markAsNotDone();
             System.out.println(" OK, I've marked this task as not done yet:");
-            System.out.println("   [ ] " + tasks[taskIndex].getDescription());
+            System.out.println("   " + tasks[taskIndex].toDisplayString());
         } catch (NumberFormatException exception) {
             System.out.println(" Please provide a valid task number.");
         }
