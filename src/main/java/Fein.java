@@ -51,6 +51,12 @@ public class Fein {
                     markTask(command, tasks, taskCount);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                     unmarkTask(command, tasks, taskCount);
+                } else if (command.equals("delete") || command.startsWith("delete ")) {
+                    Task deletedTask = deleteTask(command, tasks, taskCount);
+                    taskCount--;
+                    System.out.println(" Noted. I've removed this task:");
+                    System.out.println("   " + deletedTask);
+                    System.out.println(" Now you have " + taskCount + " tasks in the list.");
                 } else {
                     tasks[taskCount] = createTask(command);
                     taskCount++;
@@ -162,12 +168,32 @@ public class Fein {
         System.out.println("   " + tasks[taskIndex]);
     }
 
+    /** Removes the numbered task, shifts later tasks forward, and returns the removed task. */
+    private static Task deleteTask(String command, Task[] tasks, int taskCount) throws FeinException {
+        int taskNumber = parseTaskNumber(command, "delete");
+        if (taskNumber <= 0) {
+            throw new FeinException("OOPS!!! Task numbers start from 1, not 0");
+        }
+        if (taskNumber > taskCount) {
+            throw new FeinException("OOPS!!! Task " + taskNumber + " don't exist, check your list again");
+        }
+
+        int taskIndex = taskNumber - 1;
+        Task deletedTask = tasks[taskIndex];
+        for (int i = taskIndex; i < taskCount - 1; i++) {
+            tasks[i] = tasks[i + 1];
+        }
+        tasks[taskCount - 1] = null;
+        return deletedTask;
+    }
+
     /** Parses a mark or unmark argument and reports malformed input consistently. */
     private static int parseTaskNumber(String command, String action) throws FeinException {
         String value = command.length() > action.length()
                 ? command.substring(action.length()).trim() : "";
         if (value.isEmpty()) {
-            throw new FeinException("OOPS!!! Mark what? Give Fein a task number");
+            String actionName = action.substring(0, 1).toUpperCase() + action.substring(1);
+            throw new FeinException("OOPS!!! " + actionName + " what? Give Fein a task number");
         }
         try {
             return Integer.parseInt(value);

@@ -19,6 +19,64 @@ Copy the following template for each real test case (remove the indentation):
     ```
 ```
 
+## Test case: delete task and renumber remaining tasks
+
+**Aim:** Verify that deleting a task removes it, shifts later tasks forward, and updates the task count.
+**Command:** `mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein`
+**Inputs:**
+```text
+todo first
+deadline second /by tomorrow
+event third /from 2pm /to 4pm
+delete 2
+list
+bye
+```
+**Expected output:**
+```text
+____________________________________________________________________________________________________
+oooooooooooo           o8o                     
+`888'     `8           `"'                     
+ 888          .ooooo.  oooo  ooo. .oo.         
+ 888oooo8    d88' `88b `888  `888P"Y88b        
+ 888    "    888ooo888  888   888   888        
+ 888         888    .o  888   888   888        
+o888o        `Y8bod8P' o888o o888o o888o       
+
+Hello! I'm Fein.
+What can I do for you?
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [T][ ] first
+ Now you have 1 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [D][ ] second (by: tomorrow)
+ Now you have 2 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [E][ ] third (from: 2pm to: 4pm)
+ Now you have 3 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Noted. I've removed this task:
+   [D][ ] second (by: tomorrow)
+ Now you have 2 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] first
+ 2.[E][ ] third (from: 2pm to: 4pm)
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________________________________________________
+
+```
+
 ## Test case: unknown command
 
 **Aim:** Verify that Fein rejects commands it does not recognise.
