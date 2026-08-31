@@ -32,6 +32,11 @@ public class Task {
         return description;
     }
 
+    /** Returns whether this task has been completed. */
+    public boolean isDone() {
+        return isDone;
+    }
+
     /** Returns the common status-and-description representation of this task. */
     @Override
     public String toString() {

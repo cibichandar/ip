@@ -22,7 +22,7 @@ Copy the following template for each real test case (remove the indentation):
 ## Test case: delete task and renumber remaining tasks
 
 **Aim:** Verify that deleting a task removes it, shifts later tasks forward, and updates the task count.
-**Command:** `mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 todo first
@@ -77,10 +77,45 @@ ________________________________________________________________________________
 
 ```
 
+## Test case: load tasks at startup
+
+**Aim:** Verify that Fein loads saved todo, deadline, and event tasks, including completion status, when it starts.
+**Command:** `mkdir -p data && printf '%s\n' 'T | 1 | read book' 'D | 0 | return book | June 6th' 'E | 0 | project meeting | Aug 6th 2pm | 4pm' > data/duke.txt && java -cp /tmp/fein-ui-build Fein`
+**Inputs:**
+```text
+list
+bye
+```
+**Expected output:**
+```text
+____________________________________________________________________________________________________
+oooooooooooo           o8o                     
+`888'     `8           `"'                     
+ 888          .ooooo.  oooo  ooo. .oo.         
+ 888oooo8    d88' `88b `888  `888P"Y88b        
+ 888    "    888ooo888  888   888   888        
+ 888         888    .o  888   888   888        
+o888o        `Y8bod8P' o888o o888o o888o       
+
+Hello! I'm Fein.
+What can I do for you?
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][X] read book
+ 2.[D][ ] return book (by: June 6th)
+ 3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________________________________________________
+
+```
+
 ## Test case: unknown command
 
 **Aim:** Verify that Fein rejects commands it does not recognise.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 blah
@@ -108,7 +143,7 @@ ________________________________________________________________________________
 ## Test case: todo without description
 
 **Aim:** Verify that a todo requires a description.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 todo
@@ -136,7 +171,7 @@ ________________________________________________________________________________
 ## Test case: deadline without description
 
 **Aim:** Verify that a deadline requires a description.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 deadline
@@ -164,7 +199,7 @@ ________________________________________________________________________________
 ## Test case: deadline without due date marker
 
 **Aim:** Verify that a deadline requires a `/by` marker.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 deadline return book
@@ -192,7 +227,7 @@ ________________________________________________________________________________
 ## Test case: deadline with blank due date
 
 **Aim:** Verify that a deadline cannot have an empty due date.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 deadline return book /by
@@ -220,7 +255,7 @@ ________________________________________________________________________________
 ## Test case: event without description
 
 **Aim:** Verify that an event requires a description.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 event
@@ -248,7 +283,7 @@ ________________________________________________________________________________
 ## Test case: event without from and to
 
 **Aim:** Verify that an event requires both `/from` and `/to` markers.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 event meeting
@@ -276,7 +311,7 @@ ________________________________________________________________________________
 ## Test case: event without to
 
 **Aim:** Verify that an event requires an ending time.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 event meeting /from Mon 2pm
@@ -304,7 +339,7 @@ ________________________________________________________________________________
 ## Test case: event with blank from
 
 **Aim:** Verify that an event cannot have an empty starting time.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 event meeting /from /to 4pm
@@ -332,7 +367,7 @@ ________________________________________________________________________________
 ## Test case: mark without task number
 
 **Aim:** Verify that marking requires a task number.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 mark
@@ -360,7 +395,7 @@ ________________________________________________________________________________
 ## Test case: mark with non-number
 
 **Aim:** Verify that marking rejects non-numeric task identifiers.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 mark abc
@@ -388,7 +423,7 @@ ________________________________________________________________________________
 ## Test case: mark nonexistent task
 
 **Aim:** Verify that marking rejects a task number that is not in the list.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 mark 999
@@ -416,7 +451,7 @@ ________________________________________________________________________________
 ## Test case: mark task zero
 
 **Aim:** Verify that task numbering starts at one.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 mark 0
@@ -444,7 +479,7 @@ ________________________________________________________________________________
 ## Test case: list on empty list
 
 **Aim:** Verify the response when the task list is empty.
-**Command:** `java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 list
@@ -472,7 +507,7 @@ ________________________________________________________________________________
 ## Test case: create and list all task types
 
 **Aim:** Verify that todos, deadlines, and events are parsed and displayed with their type and date/time text.
-**Command:** `mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/duke.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein`
 **Inputs:**
 ```text
 todo borrow book
@@ -481,6 +516,7 @@ event project meeting /from Mon 2pm /to 4pm
 list
 bye
 ```
+
 **Expected output:**
 ```text
 ____________________________________________________________________________________________________
@@ -515,6 +551,68 @@ ________________________________________________________________________________
  1.[T][ ] borrow book
  2.[D][ ] return book (by: Sunday)
  3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________________________________________________
+
+```
+
+## Test case: save tasks after list changes
+
+**Aim:** Verify that adding, marking, unmarking, and deleting tasks automatically writes the current task list to `data/duke.txt`.
+**Command:** `rm -f data/duke.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein && test "$(wc -l < data/duke.txt)" -eq 2 && grep -Fq "T | 0 | read book" data/duke.txt && grep -Fq "E | 0 | project meeting | Aug 6th 2pm | 4pm" data/duke.txt`
+**Inputs:**
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+mark 1
+unmark 1
+delete 2
+bye
+```
+**Expected output:**
+```text
+____________________________________________________________________________________________________
+oooooooooooo           o8o                     
+`888'     `8           `"'                     
+ 888          .ooooo.  oooo  ooo. .oo.         
+ 888oooo8    d88' `88b `888  `888P"Y88b        
+ 888    "    888ooo888  888   888   888        
+ 888         888    .o  888   888   888        
+o888o        `Y8bod8P' o888o o888o o888o       
+
+Hello! I'm Fein.
+What can I do for you?
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return book (by: June 6th)
+ Now you have 2 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+ Now you have 3 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Nice! I've marked this task as done:
+   [T][X] read book
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ OK, I've marked this task as not done yet:
+   [T][ ] read book
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Noted. I've removed this task:
+   [D][ ] return book (by: June 6th)
+ Now you have 2 tasks in the list.
 ____________________________________________________________________________________________________
 ____________________________________________________________________________________________________
 Bye. Hope to see you again soon!

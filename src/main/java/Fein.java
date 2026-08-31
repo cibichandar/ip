@@ -21,7 +21,13 @@ public class Fein {
 
         Scanner scanner = new Scanner(System.in);
         Task[] tasks = new Task[100];
-        int taskCount = 0;
+        int taskCount;
+        try {
+            taskCount = Storage.loadTasks(tasks);
+        } catch (FeinException exception) {
+            taskCount = 0;
+            System.out.println(" " + exception.getMessage());
+        }
 
         while (true) {
             if (!scanner.hasNextLine()) {
@@ -49,17 +55,24 @@ public class Fein {
                     }
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
                     markTask(command, tasks, taskCount);
+                    Storage.saveTasks(tasks, taskCount);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                     unmarkTask(command, tasks, taskCount);
+                    Storage.saveTasks(tasks, taskCount);
                 } else if (command.equals("delete") || command.startsWith("delete ")) {
                     Task deletedTask = deleteTask(command, tasks, taskCount);
                     taskCount--;
+                    Storage.saveTasks(tasks, taskCount);
                     System.out.println(" Noted. I've removed this task:");
                     System.out.println("   " + deletedTask);
                     System.out.println(" Now you have " + taskCount + " tasks in the list.");
                 } else {
+                    if (taskCount == tasks.length) {
+                        throw new FeinException("OOPS!!! Fein's task list is full");
+                    }
                     tasks[taskCount] = createTask(command);
                     taskCount++;
+                    Storage.saveTasks(tasks, taskCount);
                     System.out.println(" Got it. I've added this task:");
                     System.out.println("   " + tasks[taskCount - 1]);
                     System.out.println(" Now you have " + taskCount + " tasks in the list.");
