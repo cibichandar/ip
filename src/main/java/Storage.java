@@ -7,7 +7,7 @@ import java.util.List;
 /** Saves and loads Fein's task list using a relative text-file path. */
 public class Storage {
     /** The file used for Fein's saved task list. */
-    private static final Path TASK_FILE = Path.of("data", "duke.txt");
+    private static final Path TASK_FILE = Path.of("data", "fein.txt");
 
     /**
      * Loads valid saved tasks into the supplied array.
