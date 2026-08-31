@@ -73,7 +73,7 @@ public class Storage {
         String details = task.getDescription();
         if (task instanceof Deadline deadline) {
             type = "D";
-            details += " | " + deadline.getBy();
+            details += " | " + deadline.getByText();
         } else if (task instanceof Event event) {
             type = "E";
             details += " | " + event.getFrom() + " | " + event.getTo();

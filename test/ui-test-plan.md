@@ -619,3 +619,42 @@ Bye. Hope to see you again soon!
 ____________________________________________________________________________________________________
 
 ```
+
+## Test case: parse numeric deadline date and time
+
+**Aim:** Verify that Fein interprets a numeric deadline as a date and time and displays it in a readable format.
+**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein`
+**Inputs:**
+```text
+deadline return book /by 2/12/2019 1800
+list
+bye
+```
+**Expected output:**
+```text
+____________________________________________________________________________________________________
+oooooooooooo           o8o                     
+`888'     `8           `"'                     
+ 888          .ooooo.  oooo  ooo. .oo.         
+ 888oooo8    d88' `88b `888  `888P"Y88b        
+ 888    "    888ooo888  888   888   888        
+ 888         888    .o  888   888   888        
+o888o        `Y8bod8P' o888o o888o o888o       
+
+Hello! I'm Fein.
+What can I do for you?
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [D][ ] return book (by: Dec 2 2019, 6:00 PM)
+ Now you have 1 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Here are the tasks in your list:
+ 1.[D][ ] return book (by: Dec 2 2019, 6:00 PM)
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________________________________________________
+
+```
