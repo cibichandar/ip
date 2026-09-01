@@ -2,8 +2,10 @@ package fein.task;
 
 /** A task with a specified start and end date or time. */
 public class Event extends Task {
-    /** The user-provided start and end values, kept as text. */
+    /** The user-provided event start value, kept as text. */
     protected String from;
+
+    /** The user-provided event end value, kept as text. */
     protected String to;
 
     /** Creates an incomplete event task. */
