@@ -2,6 +2,7 @@ package fein.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import fein.FeinException;
 
@@ -65,6 +66,18 @@ public class TaskList {
     /** Returns a defensive copy for persistence. */
     public List<Task> asList() {
         return new ArrayList<>(tasks);
+    }
+
+    /** Returns tasks whose descriptions contain the keyword, ignoring case. */
+    public List<Task> find(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
     }
 
     /** Checks that a one-based task number refers to an existing task. */

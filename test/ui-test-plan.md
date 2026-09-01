@@ -658,3 +658,48 @@ Bye. Hope to see you again soon!
 ____________________________________________________________________________________________________
 
 ```
+
+## Test case: find tasks by keyword
+
+**Aim:** Verify that find displays tasks whose descriptions contain the keyword, ignoring case.
+**Command:** `mkdir -p /tmp/fein-ui-work/data && rm -f /tmp/fein-ui-work/data/fein.txt && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && cd /tmp/fein-ui-work && java -cp /tmp/fein-ui-build fein.Fein`
+**Inputs:**
+```text
+todo read book
+todo attend class
+find BOOK
+bye
+```
+**Expected output:**
+```text
+____________________________________________________________________________________________________
+oooooooooooo           o8o                     
+`888'     `8           `"'                     
+ 888          .ooooo.  oooo  ooo. .oo.         
+ 888oooo8    d88' `88b `888  `888P"Y88b        
+ 888    "    888ooo888  888   888   888        
+ 888         888    .o  888   888   888        
+o888o        `Y8bod8P' o888o o888o o888o       
+
+Hello! I'm Fein.
+What can I do for you?
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [T][ ] read book
+ Now you have 1 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [T][ ] attend class
+ Now you have 2 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Here are the matching tasks in your list:
+ 1.[T][ ] read book
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________________________________________________
+
+```

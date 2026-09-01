@@ -26,4 +26,10 @@ class ParserTest {
     void parseInvalidCommandThrowsException() {
         assertThrows(FeinException.class, () -> parser.parseTask("unknown command"));
     }
+
+    /** Verifies that a find command returns its trimmed keyword. */
+    @Test
+    void parseFindCommandReturnsKeyword() throws FeinException {
+        assertEquals("book", parser.parseFindKeyword("find book"));
+    }
 }

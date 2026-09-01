@@ -34,4 +34,17 @@ class TaskListTest {
         assertThrows(FeinException.class, () -> tasks.delete(0));
         assertThrows(FeinException.class, () -> tasks.delete(2));
     }
+
+    /** Verifies that find matches descriptions case-insensitively without reordering tasks. */
+    @Test
+    void findReturnsMatchingTasksInOriginalOrder() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("Read book"));
+        tasks.add(new Todo("Attend class"));
+        tasks.add(new Todo("Return BOOK"));
+
+        assertEquals("Read book", tasks.find("book").get(0).getDescription());
+        assertEquals("Return BOOK", tasks.find("book").get(1).getDescription());
+        assertEquals(2, tasks.find("book").size());
+    }
 }

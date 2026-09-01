@@ -61,6 +61,9 @@ public class Fein {
     private void handleCommand(String command) throws FeinException {
         if (command.equals("list")) {
             ui.showTasks(tasks);
+        } else if (command.equals("find") || command.startsWith("find ")) {
+            String keyword = parser.parseFindKeyword(command);
+            ui.showMatchingTasks(tasks.find(keyword));
         } else if (command.equals("mark") || command.startsWith("mark ")) {
             Task task = tasks.mark(parser.parseTaskNumber(command, "mark"));
             storage.save(tasks);

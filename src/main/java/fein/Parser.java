@@ -82,4 +82,14 @@ public class Parser {
             throw new FeinException("OOPS!!! That's not a number, Fein can't read minds");
         }
     }
+
+    /** Returns the keyword from a find command. */
+    public String parseFindKeyword(String command) throws FeinException {
+        String keyword = command.length() > "find".length()
+                ? command.substring("find".length()).trim() : "";
+        if (keyword.isEmpty()) {
+            throw new FeinException("OOPS!!! Find what? Give Fein a keyword");
+        }
+        return keyword;
+    }
 }
