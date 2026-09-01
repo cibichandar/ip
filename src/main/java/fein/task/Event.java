@@ -1,3 +1,5 @@
+package fein.task;
+
 /** A task with a specified start and end date or time. */
 public class Event extends Task {
     /** The user-provided start and end values, kept as text. */

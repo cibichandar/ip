@@ -22,7 +22,7 @@ Copy the following template for each real test case (remove the indentation):
 ## Test case: delete task and renumber remaining tasks
 
 **Aim:** Verify that deleting a task removes it, shifts later tasks forward, and updates the task count.
-**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 todo first
@@ -80,7 +80,7 @@ ________________________________________________________________________________
 ## Test case: load tasks at startup
 
 **Aim:** Verify that Fein loads saved todo, deadline, and event tasks, including completion status, when it starts.
-**Command:** `mkdir -p data && printf '%s\n' 'T | 1 | read book' 'D | 0 | return book | June 6th' 'E | 0 | project meeting | Aug 6th 2pm | 4pm' > data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `mkdir -p data && printf '%s\n' 'T | 1 | read book' 'D | 0 | return book | June 6th' 'E | 0 | project meeting | Aug 6th 2pm | 4pm' > data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 list
@@ -115,7 +115,7 @@ ________________________________________________________________________________
 ## Test case: unknown command
 
 **Aim:** Verify that Fein rejects commands it does not recognise.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 blah
@@ -143,7 +143,7 @@ ________________________________________________________________________________
 ## Test case: todo without description
 
 **Aim:** Verify that a todo requires a description.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 todo
@@ -171,7 +171,7 @@ ________________________________________________________________________________
 ## Test case: deadline without description
 
 **Aim:** Verify that a deadline requires a description.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 deadline
@@ -199,7 +199,7 @@ ________________________________________________________________________________
 ## Test case: deadline without due date marker
 
 **Aim:** Verify that a deadline requires a `/by` marker.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 deadline return book
@@ -227,7 +227,7 @@ ________________________________________________________________________________
 ## Test case: deadline with blank due date
 
 **Aim:** Verify that a deadline cannot have an empty due date.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 deadline return book /by
@@ -255,7 +255,7 @@ ________________________________________________________________________________
 ## Test case: event without description
 
 **Aim:** Verify that an event requires a description.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 event
@@ -283,7 +283,7 @@ ________________________________________________________________________________
 ## Test case: event without from and to
 
 **Aim:** Verify that an event requires both `/from` and `/to` markers.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 event meeting
@@ -311,7 +311,7 @@ ________________________________________________________________________________
 ## Test case: event without to
 
 **Aim:** Verify that an event requires an ending time.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 event meeting /from Mon 2pm
@@ -339,7 +339,7 @@ ________________________________________________________________________________
 ## Test case: event with blank from
 
 **Aim:** Verify that an event cannot have an empty starting time.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 event meeting /from /to 4pm
@@ -367,7 +367,7 @@ ________________________________________________________________________________
 ## Test case: mark without task number
 
 **Aim:** Verify that marking requires a task number.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 mark
@@ -395,7 +395,7 @@ ________________________________________________________________________________
 ## Test case: mark with non-number
 
 **Aim:** Verify that marking rejects non-numeric task identifiers.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 mark abc
@@ -423,7 +423,7 @@ ________________________________________________________________________________
 ## Test case: mark nonexistent task
 
 **Aim:** Verify that marking rejects a task number that is not in the list.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 mark 999
@@ -451,7 +451,7 @@ ________________________________________________________________________________
 ## Test case: mark task zero
 
 **Aim:** Verify that task numbering starts at one.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 mark 0
@@ -479,7 +479,7 @@ ________________________________________________________________________________
 ## Test case: list on empty list
 
 **Aim:** Verify the response when the task list is empty.
-**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 list
@@ -507,7 +507,7 @@ ________________________________________________________________________________
 ## Test case: create and list all task types
 
 **Aim:** Verify that todos, deadlines, and events are parsed and displayed with their type and date/time text.
-**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 todo borrow book
@@ -561,7 +561,7 @@ ________________________________________________________________________________
 ## Test case: save tasks after list changes
 
 **Aim:** Verify that adding, marking, unmarking, and deleting tasks automatically writes the current task list to `data/fein.txt`.
-**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein && test "$(wc -l < data/fein.txt)" -eq 2 && grep -Fq "T | 0 | read book" data/fein.txt && grep -Fq "E | 0 | project meeting | Aug 6th 2pm | 4pm" data/fein.txt`
+**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && java -cp /tmp/fein-ui-build fein.Fein && test "$(wc -l < data/fein.txt)" -eq 2 && grep -Fq "T | 0 | read book" data/fein.txt && grep -Fq "E | 0 | project meeting | Aug 6th 2pm | 4pm" data/fein.txt`
 **Inputs:**
 ```text
 todo read book
@@ -623,7 +623,7 @@ ________________________________________________________________________________
 ## Test case: parse numeric deadline date and time
 
 **Aim:** Verify that Fein interprets a numeric deadline as a date and time and displays it in a readable format.
-**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build src/main/java/*.java && java -cp /tmp/fein-ui-build Fein`
+**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 deadline return book /by 2/12/2019 1800

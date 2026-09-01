@@ -1,3 +1,5 @@
+package fein.task;
+
 /** Represents a task in Fein's task list. */
 public class Task {
     /** The text describing this task. */

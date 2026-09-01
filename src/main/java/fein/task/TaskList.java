@@ -1,5 +1,9 @@
+package fein.task;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import fein.FeinException;
 
 /** Owns Fein's tasks and operations that change the task list. */
 public class TaskList {

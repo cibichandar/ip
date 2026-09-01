@@ -1,3 +1,10 @@
+package fein;
+
+import fein.task.Deadline;
+import fein.task.Event;
+import fein.task.Task;
+import fein.task.Todo;
+
 /** Converts user commands into tasks and command arguments. */
 public class Parser {
     /** Creates a task from a user command. */

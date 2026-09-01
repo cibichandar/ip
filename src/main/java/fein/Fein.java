@@ -1,3 +1,8 @@
+package fein;
+
+import fein.task.Task;
+import fein.task.TaskList;
+
 /** Coordinates Fein's user interface, parser, task list, and storage. */
 public class Fein {
     /** Handles command-line input and output. */

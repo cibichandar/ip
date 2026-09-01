@@ -1,4 +1,9 @@
+package fein;
+
 import java.util.Scanner;
+
+import fein.task.Task;
+import fein.task.TaskList;
 
 /** Handles all interaction between Fein and the command-line user. */
 public class Ui {

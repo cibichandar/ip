@@ -1,9 +1,17 @@
+package fein;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import fein.task.Deadline;
+import fein.task.Event;
+import fein.task.Task;
+import fein.task.TaskList;
+import fein.task.Todo;
 
 /** Loads and saves Fein's task list using a text file. */
 public class Storage {
