@@ -2,73 +2,57 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
-/** Saves and loads Fein's task list using a relative text-file path. */
+/** Loads and saves Fein's task list using a text file. */
 public class Storage {
-    /** The file used for Fein's saved task list. */
-    private static final Path TASK_FILE = Path.of("data", "fein.txt");
+    /** The file used for this Fein instance's saved task list. */
+    private final Path taskFile;
 
-    /**
-     * Loads valid saved tasks into the supplied array.
-     *
-     * <p>A missing file represents an empty task list. Blank and malformed lines are ignored so
-     * one damaged record does not prevent the rest of the list from being loaded.</p>
-     *
-     * @param tasks the array that receives loaded tasks
-     * @return the number of tasks loaded
-     * @throws FeinException if the file exists but cannot be read
-     */
-    public static int loadTasks(Task[] tasks) throws FeinException {
+    /** Creates storage backed by the supplied file path. */
+    public Storage(String filePath) {
+        taskFile = Path.of(filePath);
+    }
+
+    /** Loads valid saved tasks, treating a missing file as an empty list. */
+    public List<Task> load() throws FeinException {
         try {
-            if (!Files.exists(TASK_FILE)) {
-                return 0;
+            if (!Files.exists(taskFile)) {
+                return new ArrayList<>();
             }
-        } catch (SecurityException exception) {
-            throw new FeinException("OOPS!!! Fein couldn't load your saved tasks");
-        }
-
-        try {
-            List<String> lines = Files.readAllLines(TASK_FILE, StandardCharsets.UTF_8);
-            int taskCount = 0;
-            for (String line : lines) {
-                if (taskCount == tasks.length) {
-                    break;
-                }
+            List<Task> tasks = new ArrayList<>();
+            for (String line : Files.readAllLines(taskFile, StandardCharsets.UTF_8)) {
                 Task task = parseTask(line);
                 if (task != null) {
-                    tasks[taskCount] = task;
-                    taskCount++;
+                    tasks.add(task);
                 }
             }
-            return taskCount;
+            return tasks;
         } catch (IOException | SecurityException exception) {
             throw new FeinException("OOPS!!! Fein couldn't load your saved tasks");
         }
     }
 
-    /**
-     * Replaces the saved task list with the tasks currently in memory.
-     *
-     * @param tasks the array containing the current tasks
-     * @param taskCount the number of valid tasks in the array
-     * @throws FeinException if the task list cannot be written
-     */
-    public static void saveTasks(Task[] tasks, int taskCount) throws FeinException {
+    /** Replaces the saved task list with the tasks currently in memory. */
+    public void save(TaskList tasks) throws FeinException {
         try {
-            Files.createDirectories(TASK_FILE.getParent());
-            StringBuilder savedTasks = new StringBuilder();
-            for (int i = 0; i < taskCount; i++) {
-                savedTasks.append(formatTask(tasks[i])).append(System.lineSeparator());
+            Path parent = taskFile.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
             }
-            Files.writeString(TASK_FILE, savedTasks.toString(), StandardCharsets.UTF_8);
+            StringBuilder savedTasks = new StringBuilder();
+            for (Task task : tasks.asList()) {
+                savedTasks.append(formatTask(task)).append(System.lineSeparator());
+            }
+            Files.writeString(taskFile, savedTasks.toString(), StandardCharsets.UTF_8);
         } catch (IOException | SecurityException exception) {
             throw new FeinException("OOPS!!! Fein couldn't save your tasks");
         }
     }
 
     /** Converts one task into the simple line format used by the save file. */
-    private static String formatTask(Task task) {
+    private String formatTask(Task task) {
         String type;
         String details = task.getDescription();
         if (task instanceof Deadline deadline) {
@@ -84,21 +68,18 @@ public class Storage {
     }
 
     /** Converts one saved line into a task, or returns null for a malformed line. */
-    private static Task parseTask(String line) {
+    private Task parseTask(String line) {
         if (line == null || line.isBlank()) {
             return null;
         }
-
         String[] fields = line.split("\\s*\\|\\s*", -1);
         if (fields.length < 3 || !(fields[1].equals("0") || fields[1].equals("1"))) {
             return null;
         }
-
         String description = fields[2].trim();
         if (description.isEmpty()) {
             return null;
         }
-
         Task task;
         if (fields[0].equals("T") && fields.length == 3) {
             task = new Todo(description);
@@ -110,7 +91,6 @@ public class Storage {
         } else {
             return null;
         }
-
         if (fields[1].equals("1")) {
             task.markAsDone();
         }

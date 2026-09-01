@@ -1,217 +1,83 @@
-import java.util.Scanner;
-
-/** A simple command-line task manager. */
+/** Coordinates Fein's user interface, parser, task list, and storage. */
 public class Fein {
-    /** Starts Fein and processes commands until the user enters {@code bye}. */
-    public static void main(String[] args) {
-        String separator = "_".repeat(100);
-        String banner = "oooooooooooo           o8o                     \n"
-                + "`888'     `8           `\"'                     \n"
-                + " 888          .ooooo.  oooo  ooo. .oo.         \n"
-                + " 888oooo8    d88' `88b `888  `888P\"Y88b        \n"
-                + " 888    \"    888ooo888  888   888   888        \n"
-                + " 888         888    .o  888   888   888        \n"
-                + "o888o        `Y8bod8P' o888o o888o o888o       \n";
+    /** Handles command-line input and output. */
+    private final Ui ui;
 
-        System.out.println(separator);
-        System.out.println(banner);
-        System.out.println("Hello! I'm Fein.");
-        System.out.println("What can I do for you?");
-        System.out.println(separator);
+    /** Converts user commands into tasks and arguments. */
+    private final Parser parser;
 
-        Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[100];
-        int taskCount;
+    /** Owns the current tasks. */
+    private TaskList tasks;
+
+    /** Loads and saves tasks. */
+    private final Storage storage;
+
+    /** Creates Fein using the default task file. */
+    public Fein() {
+        this("data/fein.txt");
+    }
+
+    /** Creates Fein using the supplied task file. */
+    public Fein(String filePath) {
+        ui = new Ui();
+        parser = new Parser();
+        storage = new Storage(filePath);
         try {
-            taskCount = Storage.loadTasks(tasks);
+            tasks = new TaskList(storage.load());
         } catch (FeinException exception) {
-            taskCount = 0;
-            System.out.println(" " + exception.getMessage());
+            ui.showError(exception.getMessage());
+            tasks = new TaskList();
         }
+    }
 
+    /** Runs Fein until the user enters {@code bye} or closes input. */
+    public void run() {
+        ui.showWelcome();
         while (true) {
-            if (!scanner.hasNextLine()) {
+            String command = ui.readCommand();
+            if (command == null) {
                 break;
             }
-            String command = scanner.nextLine();
-
-            System.out.println(separator);
-
+            ui.showSeparator();
             try {
                 if (command.equals("bye")) {
-                    System.out.println("Bye. Hope to see you again soon!");
-                    System.out.println(separator);
+                    ui.showGoodbye();
                     break;
                 }
-
-                if (command.equals("list")) {
-                    if (taskCount == 0) {
-                        System.out.println(" Nothing on the list yet, Fein's waiting on you");
-                    } else {
-                        System.out.println(" Here are the tasks in your list:");
-                        for (int i = 0; i < taskCount; i++) {
-                            System.out.println(" " + (i + 1) + "." + tasks[i]);
-                        }
-                    }
-                } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    markTask(command, tasks, taskCount);
-                    Storage.saveTasks(tasks, taskCount);
-                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    unmarkTask(command, tasks, taskCount);
-                    Storage.saveTasks(tasks, taskCount);
-                } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    Task deletedTask = deleteTask(command, tasks, taskCount);
-                    taskCount--;
-                    Storage.saveTasks(tasks, taskCount);
-                    System.out.println(" Noted. I've removed this task:");
-                    System.out.println("   " + deletedTask);
-                    System.out.println(" Now you have " + taskCount + " tasks in the list.");
-                } else {
-                    if (taskCount == tasks.length) {
-                        throw new FeinException("OOPS!!! Fein's task list is full");
-                    }
-                    tasks[taskCount] = createTask(command);
-                    taskCount++;
-                    Storage.saveTasks(tasks, taskCount);
-                    System.out.println(" Got it. I've added this task:");
-                    System.out.println("   " + tasks[taskCount - 1]);
-                    System.out.println(" Now you have " + taskCount + " tasks in the list.");
-                }
+                handleCommand(command);
             } catch (FeinException exception) {
-                System.out.println(" " + exception.getMessage());
+                ui.showError(exception.getMessage());
             }
-
-            System.out.println(separator);
+            ui.showSeparator();
         }
     }
 
-    /** Creates the appropriate task subtype from a user command. */
-    private static Task createTask(String command) throws FeinException {
-        if (command.equals("todo") || command.startsWith("todo ")) {
-            String description = command.length() > "todo".length()
-                    ? command.substring("todo".length()).trim() : "";
-            if (description.isEmpty()) {
-                throw new FeinException("OOPS!!! Can't fein for nothing, give the todo a description");
-            }
-            return new Todo(description);
+    /** Dispatches one command to the object responsible for that operation. */
+    private void handleCommand(String command) throws FeinException {
+        if (command.equals("list")) {
+            ui.showTasks(tasks);
+        } else if (command.equals("mark") || command.startsWith("mark ")) {
+            Task task = tasks.mark(parser.parseTaskNumber(command, "mark"));
+            storage.save(tasks);
+            ui.showTaskMarked(task);
+        } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+            Task task = tasks.unmark(parser.parseTaskNumber(command, "unmark"));
+            storage.save(tasks);
+            ui.showTaskUnmarked(task);
+        } else if (command.equals("delete") || command.startsWith("delete ")) {
+            Task deletedTask = tasks.delete(parser.parseTaskNumber(command, "delete"));
+            storage.save(tasks);
+            ui.showTaskDeleted(deletedTask, tasks.size());
+        } else {
+            Task task = parser.parseTask(command);
+            tasks.add(task);
+            storage.save(tasks);
+            ui.showTaskAdded(task, tasks.size());
         }
-
-        if (command.equals("deadline") || command.startsWith("deadline ")) {
-            String remainder = command.length() > "deadline".length()
-                    ? command.substring("deadline".length()).trim() : "";
-            if (remainder.isEmpty()) {
-                throw new FeinException("OOPS!!! Empty deadline? Fein needs a description too");
-            }
-            int separator = remainder.indexOf(" /by");
-            if (separator < 0) {
-                throw new FeinException("OOPS!!! When's it due? Add a /by");
-            }
-            String description = remainder.substring(0, separator).trim();
-            String by = remainder.substring(separator + " /by".length()).trim();
-            if (description.isEmpty()) {
-                throw new FeinException("OOPS!!! Empty deadline? Fein needs a description too");
-            }
-            if (by.isEmpty()) {
-                throw new FeinException("OOPS!!! You left the date blank after /by");
-            }
-            return new Deadline(description, by);
-        }
-
-        if (command.equals("event") || command.startsWith("event ")) {
-            String remainder = command.length() > "event".length()
-                    ? command.substring("event".length()).trim() : "";
-            if (remainder.isEmpty()) {
-                throw new FeinException("OOPS!!! Empty event? Fein needs a description too");
-            }
-            int fromSeparator = remainder.indexOf(" /from");
-            int toSeparator = remainder.indexOf(" /to");
-            if (fromSeparator < 0 || toSeparator < 0) {
-                if (fromSeparator >= 0 && toSeparator < 0) {
-                    throw new FeinException("OOPS!!! Missing the /to, when does it end?");
-                }
-                throw new FeinException("OOPS!!! Fein needs a /from and /to for this one");
-            }
-            String description = remainder.substring(0, fromSeparator).trim();
-            String from = remainder.substring(fromSeparator + " /from".length(), toSeparator).trim();
-            String to = remainder.substring(toSeparator + " /to".length()).trim();
-            if (description.isEmpty()) {
-                throw new FeinException("OOPS!!! Empty event? Fein needs a description too");
-            }
-            if (from.isEmpty()) {
-                throw new FeinException("OOPS!!! You left /from blank");
-            }
-            if (to.isEmpty()) {
-                throw new FeinException("OOPS!!! Missing the /to, when does it end?");
-            }
-            return new Event(description, from, to);
-        }
-
-        throw new FeinException("OOPS!!! Fein don't know that one, try again");
     }
 
-    /** Marks the numbered task as complete and prints a confirmation. */
-    private static void markTask(String command, Task[] tasks, int taskCount) throws FeinException {
-        int taskNumber = parseTaskNumber(command, "mark");
-        if (taskNumber <= 0) {
-            throw new FeinException("OOPS!!! Task numbers start from 1, not 0");
-        }
-        if (taskNumber > taskCount) {
-            throw new FeinException("OOPS!!! Task " + taskNumber + " don't exist, check your list again");
-        }
-
-        int taskIndex = taskNumber - 1;
-        tasks[taskIndex].markAsDone();
-        System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("   " + tasks[taskIndex]);
-    }
-
-    /** Marks the numbered task as not complete and prints a confirmation. */
-    private static void unmarkTask(String command, Task[] tasks, int taskCount) throws FeinException {
-        int taskNumber = parseTaskNumber(command, "unmark");
-        if (taskNumber <= 0) {
-            throw new FeinException("OOPS!!! Task numbers start from 1, not 0");
-        }
-        if (taskNumber > taskCount) {
-            throw new FeinException("OOPS!!! Task " + taskNumber + " don't exist, check your list again");
-        }
-
-        int taskIndex = taskNumber - 1;
-        tasks[taskIndex].markAsNotDone();
-        System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("   " + tasks[taskIndex]);
-    }
-
-    /** Removes the numbered task, shifts later tasks forward, and returns the removed task. */
-    private static Task deleteTask(String command, Task[] tasks, int taskCount) throws FeinException {
-        int taskNumber = parseTaskNumber(command, "delete");
-        if (taskNumber <= 0) {
-            throw new FeinException("OOPS!!! Task numbers start from 1, not 0");
-        }
-        if (taskNumber > taskCount) {
-            throw new FeinException("OOPS!!! Task " + taskNumber + " don't exist, check your list again");
-        }
-
-        int taskIndex = taskNumber - 1;
-        Task deletedTask = tasks[taskIndex];
-        for (int i = taskIndex; i < taskCount - 1; i++) {
-            tasks[i] = tasks[i + 1];
-        }
-        tasks[taskCount - 1] = null;
-        return deletedTask;
-    }
-
-    /** Parses a mark or unmark argument and reports malformed input consistently. */
-    private static int parseTaskNumber(String command, String action) throws FeinException {
-        String value = command.length() > action.length()
-                ? command.substring(action.length()).trim() : "";
-        if (value.isEmpty()) {
-            String actionName = action.substring(0, 1).toUpperCase() + action.substring(1);
-            throw new FeinException("OOPS!!! " + actionName + " what? Give Fein a task number");
-        }
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException exception) {
-            throw new FeinException("OOPS!!! That's not a number, Fein can't read minds");
-        }
+    /** Starts Fein with its default storage file. */
+    public static void main(String[] args) {
+        new Fein().run();
     }
 }
