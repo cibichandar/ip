@@ -1,5 +1,7 @@
 package fein;
 
+import java.util.List;
+
 import fein.task.Task;
 import fein.task.TaskList;
 
@@ -17,6 +19,9 @@ public class Fein {
     /** Loads and saves tasks. */
     private final Storage storage;
 
+    /** Identifies the most recently processed command for GUI styling. */
+    private String commandType;
+
     /** Creates Fein using the default task file. */
     public Fein() {
         this("data/fein.txt");
@@ -27,12 +32,88 @@ public class Fein {
         ui = new Ui();
         parser = new Parser();
         storage = new Storage(filePath);
+        commandType = "";
         try {
             tasks = new TaskList(storage.load());
         } catch (FeinException exception) {
             ui.showError(exception.getMessage());
             tasks = new TaskList();
         }
+    }
+
+    /**
+     * Returns Fein's response to a command and applies any requested task-list changes.
+     *
+     * @param command the command entered by the user
+     * @return the response that should be displayed in the chat
+     */
+    public String getResponse(String command) {
+        String normalizedCommand = command.trim();
+        commandType = "error";
+        try {
+            if (normalizedCommand.equals("bye")) {
+                commandType = "bye";
+                return "Bye. Hope to see you again soon!";
+            }
+            if (normalizedCommand.equals("list")) {
+                commandType = "list";
+                return formatTasks(tasks.asList(), "Here are the tasks in your list:",
+                        "Nothing on the list yet, Fein's waiting on you");
+            }
+            if (normalizedCommand.equals("find") || normalizedCommand.startsWith("find ")) {
+                commandType = "find";
+                String keyword = parser.parseFindKeyword(normalizedCommand);
+                return formatTasks(tasks.find(keyword), "Here are the matching tasks in your list:",
+                        "No matching tasks found");
+            }
+            if (normalizedCommand.equals("mark") || normalizedCommand.startsWith("mark ")) {
+                commandType = "mark";
+                Task task = tasks.mark(parser.parseTaskNumber(normalizedCommand, "mark"));
+                storage.save(tasks);
+                return "Nice! I've marked this task as done:\n" + task;
+            }
+            if (normalizedCommand.equals("unmark") || normalizedCommand.startsWith("unmark ")) {
+                commandType = "unmark";
+                Task task = tasks.unmark(parser.parseTaskNumber(normalizedCommand, "unmark"));
+                storage.save(tasks);
+                return "OK, I've marked this task as not done yet:\n" + task;
+            }
+            if (normalizedCommand.equals("delete") || normalizedCommand.startsWith("delete ")) {
+                commandType = "delete";
+                Task task = tasks.delete(parser.parseTaskNumber(normalizedCommand, "delete"));
+                storage.save(tasks);
+                return "Noted. I've removed this task:\n" + task
+                        + "\nNow you have " + tasks.size() + " tasks in the list.";
+            }
+
+            Task task = parser.parseTask(normalizedCommand);
+            tasks.add(task);
+            storage.save(tasks);
+            commandType = "add";
+            return "Got it. I've added this task:\n" + task
+                    + "\nNow you have " + tasks.size() + " tasks in the list.";
+        } catch (FeinException exception) {
+            commandType = "error";
+            return exception.getMessage();
+        }
+    }
+
+    /** Returns the type of the most recently processed command. */
+    public String getCommandType() {
+        return commandType;
+    }
+
+    /** Returns a formatted response containing a heading and numbered tasks. */
+    private String formatTasks(List<Task> matchingTasks, String heading, String emptyMessage) {
+        if (matchingTasks.isEmpty()) {
+            return emptyMessage;
+        }
+
+        StringBuilder response = new StringBuilder(heading);
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            response.append("\n").append(i + 1).append(".").append(matchingTasks.get(i));
+        }
+        return response.toString();
     }
 
     /** Runs Fein until the user enters {@code bye} or closes input. */

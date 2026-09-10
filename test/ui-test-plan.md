@@ -22,7 +22,7 @@ Copy the following template for each real test case (remove the indentation):
 ## Test case: delete task and renumber remaining tasks
 
 **Aim:** Verify that deleting a task removes it, shifts later tasks forward, and updates the task count.
-**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && java -cp /tmp/fein-ui-build fein.Fein`
+**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java/fein -name '*.java' ! -name 'Main.java' ! -name 'Launcher.java' ! -name 'MainWindow.java' ! -name 'DialogBox.java') && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 todo first
@@ -507,7 +507,7 @@ ________________________________________________________________________________
 ## Test case: create and list all task types
 
 **Aim:** Verify that todos, deadlines, and events are parsed and displayed with their type and date/time text.
-**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && java -cp /tmp/fein-ui-build fein.Fein`
+**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java/fein -name '*.java' ! -name 'Main.java' ! -name 'Launcher.java' ! -name 'MainWindow.java' ! -name 'DialogBox.java') && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 todo borrow book
@@ -561,7 +561,7 @@ ________________________________________________________________________________
 ## Test case: save tasks after list changes
 
 **Aim:** Verify that adding, marking, unmarking, and deleting tasks automatically writes the current task list to `data/fein.txt`.
-**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && java -cp /tmp/fein-ui-build fein.Fein && test "$(wc -l < data/fein.txt)" -eq 2 && grep -Fq "T | 0 | read book" data/fein.txt && grep -Fq "E | 0 | project meeting | Aug 6th 2pm | 4pm" data/fein.txt`
+**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java/fein -name '*.java' ! -name 'Main.java' ! -name 'Launcher.java' ! -name 'MainWindow.java' ! -name 'DialogBox.java') && java -cp /tmp/fein-ui-build fein.Fein && test "$(wc -l < data/fein.txt)" -eq 2 && grep -Fq "T | 0 | read book" data/fein.txt && grep -Fq "E | 0 | project meeting | Aug 6th 2pm | 4pm" data/fein.txt`
 **Inputs:**
 ```text
 todo read book
@@ -623,7 +623,7 @@ ________________________________________________________________________________
 ## Test case: parse numeric deadline date and time
 
 **Aim:** Verify that Fein interprets a numeric deadline as a date and time and displays it in a readable format.
-**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && java -cp /tmp/fein-ui-build fein.Fein`
+**Command:** `rm -f data/fein.txt && mkdir -p /tmp/fein-ui-build && javac -d /tmp/fein-ui-build $(find src/main/java/fein -name '*.java' ! -name 'Main.java' ! -name 'Launcher.java' ! -name 'MainWindow.java' ! -name 'DialogBox.java') && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 deadline return book /by 2/12/2019 1800
@@ -662,7 +662,7 @@ ________________________________________________________________________________
 ## Test case: find tasks by keyword
 
 **Aim:** Verify that find displays tasks whose descriptions contain the keyword, ignoring case.
-**Command:** `mkdir -p /tmp/fein-ui-work/data && rm -f /tmp/fein-ui-work/data/fein.txt && javac -d /tmp/fein-ui-build $(find src/main/java -name '*.java') && cd /tmp/fein-ui-work && java -cp /tmp/fein-ui-build fein.Fein`
+**Command:** `mkdir -p /tmp/fein-ui-work/data && rm -f /tmp/fein-ui-work/data/fein.txt && javac -d /tmp/fein-ui-build $(find src/main/java/fein -name '*.java' ! -name 'Main.java' ! -name 'Launcher.java' ! -name 'MainWindow.java' ! -name 'DialogBox.java') && cd /tmp/fein-ui-work && java -cp /tmp/fein-ui-build fein.Fein`
 **Inputs:**
 ```text
 todo read book
