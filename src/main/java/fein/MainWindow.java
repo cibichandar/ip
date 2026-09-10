@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 /** Controls Fein's FXML-based chat window. */
 public class MainWindow extends AnchorPane {
     private static final String CHATBOT_IMAGE_PATH = "/images/travis_scott.png";
+
     private static final String WELCOME_MESSAGE = "Hello! I'm Fein.\nWhat can I do for you?";
 
     @FXML
