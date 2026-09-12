@@ -52,50 +52,80 @@ public class Fein {
         commandType = "error";
         try {
             if (normalizedCommand.equals("bye")) {
-                commandType = "bye";
-                return "Bye. Hope to see you again soon!";
+                return getByeResponse();
             }
             if (normalizedCommand.equals("list")) {
-                commandType = "list";
-                return formatTasks(tasks.asList(), "Here are the tasks in your list:",
-                        "Nothing on the list yet, Fein's waiting on you");
+                return getListResponse();
             }
             if (normalizedCommand.equals("find") || normalizedCommand.startsWith("find ")) {
-                commandType = "find";
-                String keyword = parser.parseFindKeyword(normalizedCommand);
-                return formatTasks(tasks.find(keyword), "Here are the matching tasks in your list:",
-                        "No matching tasks found");
+                return getFindResponse(normalizedCommand);
             }
             if (normalizedCommand.equals("mark") || normalizedCommand.startsWith("mark ")) {
-                commandType = "mark";
-                Task task = tasks.mark(parser.parseTaskNumber(normalizedCommand, "mark"));
-                storage.save(tasks);
-                return "Nice! I've marked this task as done:\n" + task;
+                return changeTaskStatus(normalizedCommand, true);
             }
             if (normalizedCommand.equals("unmark") || normalizedCommand.startsWith("unmark ")) {
-                commandType = "unmark";
-                Task task = tasks.unmark(parser.parseTaskNumber(normalizedCommand, "unmark"));
-                storage.save(tasks);
-                return "OK, I've marked this task as not done yet:\n" + task;
+                return changeTaskStatus(normalizedCommand, false);
             }
             if (normalizedCommand.equals("delete") || normalizedCommand.startsWith("delete ")) {
-                commandType = "delete";
-                Task task = tasks.delete(parser.parseTaskNumber(normalizedCommand, "delete"));
-                storage.save(tasks);
-                return "Noted. I've removed this task:\n" + task
-                        + "\nNow you have " + tasks.size() + " tasks in the list.";
+                return deleteTask(normalizedCommand);
             }
 
-            Task task = parser.parseTask(normalizedCommand);
-            tasks.add(task);
-            storage.save(tasks);
-            commandType = "add";
-            return "Got it. I've added this task:\n" + task
-                    + "\nNow you have " + tasks.size() + " tasks in the list.";
+            return addTask(normalizedCommand);
         } catch (FeinException exception) {
             commandType = "error";
             return exception.getMessage();
         }
+    }
+
+    /** Returns Fein's farewell response. */
+    private String getByeResponse() {
+        commandType = "bye";
+        return "Bye. Hope to see you again soon!";
+    }
+
+    /** Returns the current task-list response. */
+    private String getListResponse() {
+        commandType = "list";
+        return formatTasks(tasks.asList(), "Here are the tasks in your list:",
+                "Nothing on the list yet, Fein's waiting on you");
+    }
+
+    /** Returns the response for a find command. */
+    private String getFindResponse(String command) throws FeinException {
+        commandType = "find";
+        String keyword = parser.parseFindKeyword(command);
+        return formatTasks(tasks.find(keyword), "Here are the matching tasks in your list:",
+                "No matching tasks found");
+    }
+
+    /** Changes a task's completion state and returns Fein's response. */
+    private String changeTaskStatus(String command, boolean shouldMark) throws FeinException {
+        commandType = shouldMark ? "mark" : "unmark";
+        int taskNumber = parser.parseTaskNumber(command, shouldMark ? "mark" : "unmark");
+        Task task = shouldMark ? tasks.mark(taskNumber) : tasks.unmark(taskNumber);
+        storage.save(tasks);
+        return shouldMark
+                ? "Nice! I've marked this task as done:\n" + task
+                : "OK, I've marked this task as not done yet:\n" + task;
+    }
+
+    /** Deletes a task and returns Fein's response. */
+    private String deleteTask(String command) throws FeinException {
+        commandType = "delete";
+        Task task = tasks.delete(parser.parseTaskNumber(command, "delete"));
+        storage.save(tasks);
+        return "Noted. I've removed this task:\n" + task
+                + "\nNow you have " + tasks.size() + " tasks in the list.";
+    }
+
+    /** Adds a task and returns Fein's response. */
+    private String addTask(String command) throws FeinException {
+        Task task = parser.parseTask(command);
+        tasks.add(task);
+        storage.save(tasks);
+        commandType = "add";
+        return "Got it. I've added this task:\n" + task
+                + "\nNow you have " + tasks.size() + " tasks in the list.";
     }
 
     /** Returns the type of the most recently processed command. */
