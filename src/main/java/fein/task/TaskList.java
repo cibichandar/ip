@@ -18,16 +18,25 @@ public class TaskList {
 
     /** Creates a task list containing the supplied tasks. */
     public TaskList(List<Task> initialTasks) {
+        // Loaded task data must exist, and each entry must be safe for list operations.
+        assert initialTasks != null : "An initial task collection must be present";
+        for (Task task : initialTasks) {
+            assert task != null : "A task list must not contain null tasks";
+        }
         tasks = new ArrayList<>(initialTasks);
     }
 
     /** Adds a task to the list. */
     public void add(Task task) {
+        // Null entries would break display, searching, and persistence invariants.
+        assert task != null : "A task list must not contain null tasks";
         tasks.add(task);
     }
 
     /** Returns the task at a zero-based index. */
     public Task get(int index) {
+        // Internal callers convert user-facing one-based numbers before accessing the list.
+        assert index >= 0 && index < tasks.size() : "A task index must refer to an existing task";
         return tasks.get(index);
     }
 
@@ -44,12 +53,18 @@ public class TaskList {
     /** Removes and returns the task at a one-based task number. */
     public Task delete(int taskNumber) throws FeinException {
         validateTaskNumber(taskNumber);
+        // Validation above guarantees that conversion to a zero-based index is safe.
+        assert taskNumber >= 1 && taskNumber <= tasks.size()
+                : "Validated task numbers must refer to an existing task";
         return tasks.remove(taskNumber - 1);
     }
 
     /** Marks the task at a one-based task number as done. */
     public Task mark(int taskNumber) throws FeinException {
         validateTaskNumber(taskNumber);
+        // Validation above guarantees that conversion to a zero-based index is safe.
+        assert taskNumber >= 1 && taskNumber <= tasks.size()
+                : "Validated task numbers must refer to an existing task";
         Task task = tasks.get(taskNumber - 1);
         task.markAsDone();
         return task;
@@ -58,6 +73,9 @@ public class TaskList {
     /** Marks the task at a one-based task number as not done. */
     public Task unmark(int taskNumber) throws FeinException {
         validateTaskNumber(taskNumber);
+        // Validation above guarantees that conversion to a zero-based index is safe.
+        assert taskNumber >= 1 && taskNumber <= tasks.size()
+                : "Validated task numbers must refer to an existing task";
         Task task = tasks.get(taskNumber - 1);
         task.markAsNotDone();
         return task;
@@ -70,6 +88,8 @@ public class TaskList {
 
     /** Returns tasks whose descriptions contain the keyword, ignoring case. */
     public List<Task> find(String keyword) {
+        // Fein validates that a find command contains a keyword before calling this method.
+        assert keyword != null && !keyword.isBlank() : "A search keyword must be non-blank";
         String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
         List<Task> matchingTasks = new ArrayList<>();
         for (Task task : tasks) {

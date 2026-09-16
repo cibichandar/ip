@@ -34,6 +34,8 @@ public class DialogBox extends HBox {
             throw new IllegalStateException("Unable to load the dialog box layout", exception);
         }
 
+        // These controls are required by DialogBox.fxml for every message to be displayed.
+        assert dialog != null && displayPicture != null : "DialogBox.fxml must inject its controls";
         dialog.setText(text);
         displayPicture.setImage(image);
         if (image == null) {
@@ -66,6 +68,8 @@ public class DialogBox extends HBox {
 
     /** Applies a colour to Fein's response based on the command that produced it. */
     private void changeDialogStyle(String commandType) {
+        // Command types are assigned by Fein before a response reaches the UI.
+        assert commandType != null : "A response must have a command type for styling";
         if (commandType.equals("add")) {
             dialog.getStyleClass().add("add-label");
         } else if (commandType.equals("mark") || commandType.equals("unmark")) {

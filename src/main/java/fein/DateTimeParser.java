@@ -23,6 +23,9 @@ public final class DateTimeParser {
 
     /** Parses supported numeric input, returning null for natural-language deadlines. */
     public static LocalDateTime parse(String value) {
+        // Callers only pass a deadline's non-blank text to the date/time parser.
+        assert value != null : "A deadline value must be present before parsing";
+
         if (value.matches("\\d{1,2}/\\d{1,2}/\\d{4} \\d{4}")) {
             try {
                 return LocalDateTime.parse(value, INPUT_FORMAT);
@@ -42,6 +45,8 @@ public final class DateTimeParser {
 
     /** Formats a typed date and time for display and persistence. */
     public static String format(LocalDateTime value) {
+        // Formatting is only meaningful after a supported date/time has been parsed.
+        assert value != null : "A parsed date/time value must be present before formatting";
         return value.format(DISPLAY_FORMAT);
     }
 }

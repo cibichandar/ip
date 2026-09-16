@@ -11,6 +11,9 @@ public class Event extends Task {
     /** Creates an incomplete event task. */
     public Event(String description, String from, String to) {
         super(description);
+        // Parser and storage require both endpoints so every event has a complete range.
+        assert from != null && !from.isBlank() : "An event must have non-blank start text";
+        assert to != null && !to.isBlank() : "An event must have non-blank end text";
         this.from = from;
         this.to = to;
     }

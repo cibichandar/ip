@@ -20,6 +20,8 @@ public class Storage {
 
     /** Creates storage backed by the supplied file path. */
     public Storage(String filePath) {
+        // Every Fein instance needs a concrete file location for persistence.
+        assert filePath != null && !filePath.isBlank() : "Storage must have a non-blank file path";
         taskFile = Path.of(filePath);
     }
 
@@ -44,6 +46,8 @@ public class Storage {
 
     /** Replaces the saved task list with the tasks currently in memory. */
     public void save(TaskList tasks) throws FeinException {
+        // Saving null would violate the storage contract and cannot represent task state.
+        assert tasks != null : "A task list must be present before saving";
         try {
             Path parent = taskFile.getParent();
             if (parent != null) {
@@ -61,6 +65,8 @@ public class Storage {
 
     /** Converts one task into the simple line format used by the save file. */
     private String formatTask(Task task) {
+        // TaskList guarantees that its defensive copy contains only actual tasks.
+        assert task != null : "A persisted task entry must not be null";
         String type;
         String details = task.getDescription();
         if (task instanceof Deadline deadline) {
@@ -99,6 +105,8 @@ public class Storage {
         } else {
             return null;
         }
+        // A structurally valid record must have produced one of Fein's task types.
+        assert task != null : "A valid saved record must decode into a task";
         if (fields[1].equals("1")) {
             task.markAsDone();
         }
