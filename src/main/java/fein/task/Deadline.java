@@ -15,6 +15,8 @@ public class Deadline extends Task {
     /** Creates an incomplete deadline task. */
     public Deadline(String description, String by) {
         super(description);
+        // Parser and storage reject blank due-date text before constructing a deadline.
+        assert by != null && !by.isBlank() : "A deadline must have non-blank due-date text";
         this.by = DateTimeParser.parse(by);
         this.originalBy = by;
     }

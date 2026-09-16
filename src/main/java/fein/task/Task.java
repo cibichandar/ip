@@ -10,6 +10,8 @@ public class Task {
 
     /** Creates an incomplete task with the given description. */
     public Task(String description) {
+        // All task types rely on a description for display, searching, and persistence.
+        assert description != null && !description.isBlank() : "A task must have a non-blank description";
         this.description = description;
         this.isDone = false;
     }

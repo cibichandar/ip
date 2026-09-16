@@ -48,6 +48,8 @@ public class Fein {
      * @return the response that should be displayed in the chat
      */
     public String getResponse(String command) {
+        // The GUI and CLI both provide an actual line of input to this method.
+        assert command != null : "A command must be present before it is processed";
         String normalizedCommand = command.trim();
         commandType = "error";
         try {
@@ -105,6 +107,10 @@ public class Fein {
 
     /** Returns a formatted response containing a heading and numbered tasks. */
     private String formatTasks(List<Task> matchingTasks, String heading, String emptyMessage) {
+        // All three arguments are produced internally by Fein's command handlers.
+        assert matchingTasks != null : "A task result list must be present for formatting";
+        assert heading != null && emptyMessage != null : "Task-list messages must be present";
+
         if (matchingTasks.isEmpty()) {
             return emptyMessage;
         }

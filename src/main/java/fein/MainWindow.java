@@ -49,6 +49,8 @@ public class MainWindow extends AnchorPane {
 
     /** Connects the controller to Fein's existing command-processing logic. */
     public void setFein(Fein fein) {
+        // User input cannot be processed until the controller has a command processor.
+        assert fein != null : "The main window must be connected to Fein";
         this.fein = fein;
     }
 

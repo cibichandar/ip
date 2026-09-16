@@ -9,6 +9,8 @@ import fein.task.Todo;
 public class Parser {
     /** Creates a task from a user command. */
     public Task parseTask(String command) throws FeinException {
+        // A command line is always supplied by the CLI or GUI before parsing begins.
+        assert command != null : "A command must be present before parsing";
         if (command.equals("todo") || command.startsWith("todo ")) {
             String description = command.length() > "todo".length()
                     ? command.substring("todo".length()).trim() : "";
@@ -70,6 +72,9 @@ public class Parser {
 
     /** Parses a mark, unmark, or delete command's task number. */
     public int parseTaskNumber(String command, String action) throws FeinException {
+        // The action is supplied by Fein and must be non-blank for the substring below.
+        assert command != null : "A command must be present before parsing its task number";
+        assert action != null && !action.isBlank() : "A task-number action must be specified";
         String value = command.length() > action.length()
                 ? command.substring(action.length()).trim() : "";
         if (value.isEmpty()) {
@@ -85,6 +90,8 @@ public class Parser {
 
     /** Returns the keyword from a find command. */
     public String parseFindKeyword(String command) throws FeinException {
+        // This method is only called for commands that have already been identified as find commands.
+        assert command != null : "A command must be present before parsing its keyword";
         String keyword = command.length() > "find".length()
                 ? command.substring("find".length()).trim() : "";
         if (keyword.isEmpty()) {
