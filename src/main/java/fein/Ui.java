@@ -49,25 +49,25 @@ public class Ui {
 
     /** Shows a task-list response. */
     public void showTasks(TaskList tasks) {
-        if (tasks.isEmpty()) {
-            System.out.println(" Nothing on the list yet, Fein's waiting on you");
-            return;
-        }
-        System.out.println(" Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + tasks.get(i));
-        }
+        showTaskList(tasks.asList(), "Here are the tasks in your list:",
+                "Nothing on the list yet, Fein's waiting on you");
     }
 
     /** Shows tasks whose descriptions match a search keyword. */
     public void showMatchingTasks(List<Task> matchingTasks) {
-        if (matchingTasks.isEmpty()) {
-            System.out.println(" No matching tasks found");
+        showTaskList(matchingTasks, "Here are the matching tasks in your list:",
+                "No matching tasks found");
+    }
+
+    /** Shows numbered tasks, or an empty-list message when no tasks are supplied. */
+    private void showTaskList(List<Task> tasks, String heading, String emptyMessage) {
+        if (tasks.isEmpty()) {
+            System.out.println(" " + emptyMessage);
             return;
         }
-        System.out.println(" Here are the matching tasks in your list:");
-        for (int i = 0; i < matchingTasks.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + matchingTasks.get(i));
+        System.out.println(" " + heading);
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println(" " + (i + 1) + "." + tasks.get(i));
         }
     }
 
