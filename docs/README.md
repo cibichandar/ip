@@ -25,14 +25,19 @@ deadlines, and events without losing the details that matter.
 ## Getting started
 
 1. Ensure Java 25 is installed.
-1. Run the application JAR:
+1. Download `fein.jar` from the latest [GitHub Release](https://github.com/cibichandar/ip/releases).
+1. Move `fein.jar` to the folder where you want Fein to store its data.
+1. Open a terminal in that folder and run:
 
    ```bash
    java -jar fein.jar
    ```
 
-1. Type a command in the input box and press <kbd>Enter</kbd>, or select **Send**.
-1. Type `help` at any time to see Fein's command list.
+   The Fein GUI should appear in a few seconds. Fein saves tasks in `data/fein.txt` relative to this folder.
+
+1. Type a command in the input box and press <kbd>Enter</kbd>, or select **Send**. For example, enter
+   `todo buy milk` to add a task.
+1. Type `help` at any time to see Fein's command list and examples.
 
 > **Note:** Commands are lowercase. Use one space between command words.
 
