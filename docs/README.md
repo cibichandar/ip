@@ -7,9 +7,9 @@ deadlines, and events without losing the details that matter.
 
 ## Table of contents
 
-- [Quick start](#quick-start)
+- [Getting started](#getting-started)
 - [Features](#features)
-  - [Add a      i bel todo](#add-a-todo)
+  - [Add a to-do](#add-a-to-do)
   - [Add a deadline](#add-a-deadline)
   - [Add an event](#add-an-event)
   - [List tasks](#list-tasks)
@@ -18,10 +18,11 @@ deadlines, and events without losing the details that matter.
   - [Delete a task](#delete-a-task)
   - [Show help](#show-help)
   - [Exit Fein](#exit-fein)
+- [Duplicate tasks](#duplicate-tasks)
 - [Tips and error messages](#tips-and-error-messages)
 - [Saving data](#saving-data)
 
-## Quick start
+## Getting started
 
 1. Ensure Java 25 is installed.
 1. Run the application JAR:
@@ -37,7 +38,19 @@ deadlines, and events without losing the details that matter.
 
 ## Features
 
-### Add a todo
+Use this overview to find a command quickly. Detailed instructions follow below.
+
+| I want to... | Command | Example |
+| --- | --- | --- |
+| Add a task without a date or time | `todo <description>` | `todo buy milk` |
+| Add a due date or time | `deadline <description> /by <due date>` | `deadline submit report /by Friday` |
+| Add an event | `event <description> /from <start> /to <end>` | `event team meeting /from 2pm /to 4pm` |
+| View saved tasks | `list` | `list` |
+| Search tasks | `find <keyword>` | `find report` |
+| Update a task | `mark`, `unmark`, or `delete` | `mark 1` |
+| Get help or exit | `help` or `bye` | `help` |
+
+### Add a to-do
 
 Adds a task without a date or time.
 
@@ -126,9 +139,35 @@ Closes Fein.
 
 **Format:** `bye`
 
+## Duplicate tasks
+
+Fein keeps your list clean by rejecting a task with the same details as one already saved. Duplicate
+comparison ignores letter case and completion status:
+
+- A todo duplicates another todo with the same description.
+- A deadline also needs the same due date or time to be a duplicate.
+- An event also needs the same start and end times to be a duplicate.
+
+For example, after adding the first command below, the second is rejected and the original task remains
+unchanged:
+
+```text
+todo add report
+todo Add report
+```
+
+Fein also rejects commands that use repeated spaces between words. This prevents differently spaced input
+from being treated as a separate task and keeps command formats predictable:
+
+```text
+todo add report
+todo add    report
+```
+
+The second command receives a spacing-format message; the list is unchanged.
+
 ## Tips and error messages
 
-- Fein prevents duplicate todos, deadlines, and events with the same details.
 - Use `/by` once for a deadline, and use `/from` before `/to` once each for an event.
 - A task description, date, or time cannot contain the `|` character because Fein uses it internally when
   saving tasks.
