@@ -11,8 +11,10 @@ import javafx.stage.Stage;
 /** Starts Fein's JavaFX application. */
 public class Main extends Application {
     private static final String MAIN_WINDOW_FXML = "/view/MainWindow.fxml";
-    private static final double MINIMUM_WINDOW_WIDTH = 417;
-    private static final double MINIMUM_WINDOW_HEIGHT = 600;
+    private static final double INITIAL_WINDOW_WIDTH = 460;
+    private static final double INITIAL_WINDOW_HEIGHT = 700;
+    private static final double MINIMUM_WINDOW_WIDTH = 360;
+    private static final double MINIMUM_WINDOW_HEIGHT = 480;
 
     /** Loads the FXML view and displays Fein's main window. */
     @Override
@@ -24,6 +26,8 @@ public class Main extends Application {
 
         Scene scene = new Scene(mainLayout);
         stage.setTitle("Fein");
+        stage.setWidth(INITIAL_WINDOW_WIDTH);
+        stage.setHeight(INITIAL_WINDOW_HEIGHT);
         stage.setMinWidth(MINIMUM_WINDOW_WIDTH);
         stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
         stage.setScene(scene);

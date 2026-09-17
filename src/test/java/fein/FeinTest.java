@@ -32,7 +32,18 @@ class FeinTest {
     void getResponseReportsInvalidCommands(@TempDir Path temporaryDirectory) {
         Fein fein = new Fein(temporaryDirectory.resolve("fein.txt").toString());
 
-        assertEquals("OOPS!!! Fein don't know that one, try again", fein.getResponse("unknown"));
+        assertEquals("That command is not feining. Try `todo buy milk`, `list`, or `bye`.",
+                fein.getResponse("unknown"));
+        assertEquals("error", fein.getCommandType());
+    }
+
+    /** Verifies that empty input provides an in-app starting point. */
+    @Test
+    void getResponseExplainsEmptyInput(@TempDir Path temporaryDirectory) {
+        Fein fein = new Fein(temporaryDirectory.resolve("fein.txt").toString());
+
+        assertEquals("Tell me what you would like to remember. Try `todo buy milk` or `bye`.",
+                fein.getResponse(" "));
         assertEquals("error", fein.getCommandType());
     }
 

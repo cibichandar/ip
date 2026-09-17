@@ -108,11 +108,11 @@ public class TaskList {
     /** Checks that a one-based task number refers to an existing task. */
     private void validateTaskNumber(int taskNumber) throws FeinException {
         if (taskNumber <= 0) {
-            throw new FeinException("OOPS!!! Task numbers start from 1, not 0");
+            throw new FeinException("Task numbers start at 1. Try `list` to check the task number.");
         }
         if (taskNumber > tasks.size()) {
-            throw new FeinException("OOPS!!! Task " + taskNumber
-                    + " don't exist, check your list again");
+            throw new FeinException("I couldn't find task " + taskNumber
+                    + ". Try `list` to check the task number.");
         }
     }
 }

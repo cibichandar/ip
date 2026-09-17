@@ -49,6 +49,10 @@ public class Fein {
             "bye",
             "Purpose: Exit Fein.");
 
+    /** The guidance shown when no command was entered. */
+    private static final String EMPTY_COMMAND_MESSAGE = "Tell me what you would like to remember. "
+            + "Try `todo buy milk` or `bye`.";
+
     /** Handles command-line input and output. */
     private final Ui ui;
 
@@ -95,9 +99,12 @@ public class Fein {
         String normalizedCommand = command.trim();
         commandType = "error";
         try {
+            if (normalizedCommand.isEmpty()) {
+                return EMPTY_COMMAND_MESSAGE;
+            }
             if (normalizedCommand.equals("bye")) {
                 commandType = "bye";
-                return "Bye. Hope to see you again soon!";
+                return "Bye! Keeping feining and stay LIT!";
             }
             if (normalizedCommand.equals("help")) {
                 commandType = "help";
@@ -192,6 +199,10 @@ public class Fein {
 
     /** Dispatches one command to the object responsible for that operation. */
     private void handleCommand(String command) throws FeinException {
+        if (command.trim().isEmpty()) {
+            ui.showMessage(EMPTY_COMMAND_MESSAGE);
+            return;
+        }
         if (command.equals("list")) {
             ui.showTasks(tasks);
         } else if (command.equals("help")) {
