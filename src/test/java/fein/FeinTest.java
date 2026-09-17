@@ -47,6 +47,16 @@ class FeinTest {
         assertEquals("error", fein.getCommandType());
     }
 
+    /** Verifies that an empty list guides the user towards the todo command. */
+    @Test
+    void getResponseExplainsHowToAddToAnEmptyList(@TempDir Path temporaryDirectory) {
+        Fein fein = new Fein(temporaryDirectory.resolve("fein.txt").toString());
+
+        assertEquals("Your list is empty! Try adding a task with `todo <description>`.\nExample: todo buy milk",
+                fein.getResponse("list"));
+        assertEquals("list", fein.getCommandType());
+    }
+
     /** Verifies that repeated spaces between command words are rejected. */
     @Test
     void getResponseRejectsRepeatedWhitespace(@TempDir Path temporaryDirectory) {

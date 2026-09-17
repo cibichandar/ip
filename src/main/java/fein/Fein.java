@@ -116,7 +116,7 @@ public class Fein {
             if (normalizedCommand.equals("list")) {
                 commandType = "list";
                 return formatTasks(tasks.asList(), "Here are the tasks in your list:",
-                        "Nothing on the list yet, Fein's waiting on you");
+                        "Your list is empty! Try adding a task with `todo <description>`.\nExample: todo buy milk");
             }
             if (normalizedCommand.equals("find") || normalizedCommand.startsWith("find ")) {
                 commandType = "find";
@@ -141,7 +141,7 @@ public class Fein {
                 Task task = tasks.delete(parser.parseTaskNumber(normalizedCommand, "delete"));
                 storage.save(tasks);
                 return "Noted. I've removed this task:\n" + task
-                        + "\nNow you have " + tasks.size() + " tasks in the list.";
+                        + "\nNow you have " + tasks.size() + " tasks in your list.";
             }
 
             Task task = parser.parseTask(normalizedCommand);
@@ -149,7 +149,7 @@ public class Fein {
             storage.save(tasks);
             commandType = "add";
             return "Got it. I've added this task:\n" + task
-                    + "\nNow you have " + tasks.size() + " tasks in the list.";
+                    + "\nNow you have " + tasks.size() + " tasks in your list.";
         } catch (FeinException exception) {
             commandType = "error";
             return exception.getMessage();
