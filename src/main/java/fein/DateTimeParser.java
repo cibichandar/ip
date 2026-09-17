@@ -31,7 +31,12 @@ public final class DateTimeParser {
         // Utility class; do not instantiate.
     }
 
-    /** Parses supported numeric input, returning null for natural-language deadlines. */
+    /**
+     * Parses supported numeric input, returning {@code null} for natural-language deadlines.
+     *
+     * @param value the date and optional time to parse
+     * @return the parsed date and time, or {@code null} when the value is unsupported or invalid
+     */
     public static LocalDateTime parse(String value) {
         // Callers only pass a deadline's non-blank text to the date/time parser.
         assert value != null : "A deadline value must be present before parsing";
@@ -65,7 +70,12 @@ public final class DateTimeParser {
         return value;
     }
 
-    /** Returns whether text resembles a numeric or displayed date-and-time value. */
+    /**
+     * Returns whether text resembles a numeric or displayed date-and-time value.
+     *
+     * @param value the date and optional time to check
+     * @return whether the value has a supported date or date-and-time shape
+     */
     public static boolean resemblesDateTime(String value) {
         // Callers validate a non-null command field before asking whether it resembles a date and time.
         assert value != null : "A date-and-time value must be present before checking its format";
@@ -73,7 +83,12 @@ public final class DateTimeParser {
                 || value.matches(DISPLAY_DATE_TIME_PATTERN);
     }
 
-    /** Returns whether a numeric or displayed date value represents a real calendar date. */
+    /**
+     * Returns whether a numeric or displayed date value represents a real calendar date.
+     *
+     * @param value the date and optional time to validate
+     * @return whether the value represents a valid supported date or date and time
+     */
     public static boolean isValidDateTime(String value) {
         // Callers first check that the value resembles a supported date before validating it.
         assert value != null : "A date-and-time value must be present before validating it";
@@ -88,7 +103,12 @@ public final class DateTimeParser {
         return parse(value) != null;
     }
 
-    /** Formats a typed date and time for display and persistence. */
+    /**
+     * Formats a typed date and time for display and persistence.
+     *
+     * @param value the date and time to format
+     * @return the human-readable date and time
+     */
     public static String format(LocalDateTime value) {
         // Formatting is only meaningful after a supported date/time has been parsed.
         assert value != null : "A parsed date/time value must be present before formatting";
