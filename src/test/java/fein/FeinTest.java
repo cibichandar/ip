@@ -35,4 +35,25 @@ class FeinTest {
         assertEquals("OOPS!!! Fein don't know that one, try again", fein.getResponse("unknown"));
         assertEquals("error", fein.getCommandType());
     }
+
+    /** Verifies that help explains every available core command and its intended use. */
+    @Test
+    void getResponseExplainsAllCoreCommands(@TempDir Path temporaryDirectory) {
+        Fein fein = new Fein(temporaryDirectory.resolve("fein.txt").toString());
+
+        String helpResponse = fein.getResponse("help");
+
+        assertTrue(helpResponse.contains("FEIN command list:"));
+        assertTrue(helpResponse.contains("todo <description>"));
+        assertTrue(helpResponse.contains("deadline <description> /by <due date>"));
+        assertTrue(helpResponse.contains("event <description> /from <start> /to <end>"));
+        assertTrue(helpResponse.contains("find <keyword>"));
+        assertTrue(helpResponse.contains("mark <task number>"));
+        assertTrue(helpResponse.contains("unmark <task number>"));
+        assertTrue(helpResponse.contains("delete <task number>"));
+        assertTrue(helpResponse.contains("Quick commands:\nlist"));
+        assertTrue(helpResponse.contains("\nhelp\nPurpose: Show this command guide."));
+        assertTrue(helpResponse.contains("\nbye\nPurpose: Exit Fein."));
+        assertEquals("help", fein.getCommandType());
+    }
 }

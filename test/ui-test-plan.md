@@ -670,6 +670,7 @@ todo attend class
 find BOOK
 bye
 ```
+
 **Expected output:**
 ```text
 ____________________________________________________________________________________________________
@@ -697,6 +698,76 @@ ________________________________________________________________________________
 ____________________________________________________________________________________________________
  Here are the matching tasks in your list:
  1.[T][ ] read book
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________________________________________________
+
+```
+
+## Test case: display the help guide
+
+**Aim:** Verify that help lists every core command, its purpose, and examples where needed.
+**Command:** `mkdir -p /tmp/fein-ui-help/data /tmp/fein-ui-build && rm -f /tmp/fein-ui-help/data/fein.txt && javac -d /tmp/fein-ui-build $(find src/main/java/fein -name '*.java' ! -name 'Main.java' ! -name 'Launcher.java' ! -name 'MainWindow.java' ! -name 'DialogBox.java') && cd /tmp/fein-ui-help && java -cp /tmp/fein-ui-build fein.Fein`
+**Inputs:**
+```text
+help
+bye
+```
+**Expected output:**
+```text
+____________________________________________________________________________________________________
+oooooooooooo           o8o                     
+`888'     `8           `"'                     
+ 888          .ooooo.  oooo  ooo. .oo.         
+ 888oooo8    d88' `88b `888  `888P"Y88b        
+ 888    "    888ooo888  888   888   888        
+ 888         888    .o  888   888   888        
+o888o        `Y8bod8P' o888o o888o o888o       
+
+Hello! I'm Fein.
+What can I do for you?
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ FEIN command list:
+
+todo <description>
+Purpose: Add a task without a date or time.
+Example: todo buy milk
+
+deadline <description> /by <due date>
+Purpose: Add a task with a deadline.
+Example: deadline submit report /by Friday
+
+event <description> /from <start> /to <end>
+Purpose: Add a task with a start and end time.
+Example: event team meeting /from 2pm /to 4pm
+
+find <keyword>
+Purpose: Find tasks containing a word or phrase.
+Example: find report
+
+mark <task number>
+Purpose: Mark a task as completed.
+Example: mark 1
+
+unmark <task number>
+Purpose: Mark a completed task as not completed.
+Example: unmark 1
+
+delete <task number>
+Purpose: Remove a task from your list.
+Example: delete 1
+
+Quick commands:
+list
+Purpose: Show all tasks in your list.
+
+help
+Purpose: Show this command guide.
+
+bye
+Purpose: Exit Fein.
 ____________________________________________________________________________________________________
 ____________________________________________________________________________________________________
 Bye. Hope to see you again soon!

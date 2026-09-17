@@ -7,6 +7,48 @@ import fein.task.TaskList;
 
 /** Coordinates Fein's user interface, parser, task list, and storage. */
 public class Fein {
+    /** The in-app guide describing every command available in Fein. */
+    private static final String HELP_MESSAGE = String.join("\n",
+            "FEIN command list:",
+            "",
+            "todo <description>",
+            "Purpose: Add a task without a date or time.",
+            "Example: todo buy milk",
+            "",
+            "deadline <description> /by <due date>",
+            "Purpose: Add a task with a deadline.",
+            "Example: deadline submit report /by Friday",
+            "",
+            "event <description> /from <start> /to <end>",
+            "Purpose: Add a task with a start and end time.",
+            "Example: event team meeting /from 2pm /to 4pm",
+            "",
+            "find <keyword>",
+            "Purpose: Find tasks containing a word or phrase.",
+            "Example: find report",
+            "",
+            "mark <task number>",
+            "Purpose: Mark a task as completed.",
+            "Example: mark 1",
+            "",
+            "unmark <task number>",
+            "Purpose: Mark a completed task as not completed.",
+            "Example: unmark 1",
+            "",
+            "delete <task number>",
+            "Purpose: Remove a task from your list.",
+            "Example: delete 1",
+            "",
+            "Quick commands:",
+            "list",
+            "Purpose: Show all tasks in your list.",
+            "",
+            "help",
+            "Purpose: Show this command guide.",
+            "",
+            "bye",
+            "Purpose: Exit Fein.");
+
     /** Handles command-line input and output. */
     private final Ui ui;
 
@@ -56,6 +98,10 @@ public class Fein {
             if (normalizedCommand.equals("bye")) {
                 commandType = "bye";
                 return "Bye. Hope to see you again soon!";
+            }
+            if (normalizedCommand.equals("help")) {
+                commandType = "help";
+                return HELP_MESSAGE;
             }
             if (normalizedCommand.equals("list")) {
                 commandType = "list";
@@ -148,6 +194,8 @@ public class Fein {
     private void handleCommand(String command) throws FeinException {
         if (command.equals("list")) {
             ui.showTasks(tasks);
+        } else if (command.equals("help")) {
+            ui.showMessage(HELP_MESSAGE);
         } else if (command.equals("find") || command.startsWith("find ")) {
             String keyword = parser.parseFindKeyword(command);
             ui.showMatchingTasks(tasks.find(keyword));

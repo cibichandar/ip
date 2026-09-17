@@ -102,6 +102,11 @@ public class Ui {
         System.out.println(" " + message);
     }
 
+    /** Shows a general response produced by a non-task command. */
+    public void showMessage(String message) {
+        System.out.println(" " + message);
+    }
+
     /** Shows Fein's farewell. */
     public void showGoodbye() {
         System.out.println("Bye. Hope to see you again soon!");

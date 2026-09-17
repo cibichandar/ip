@@ -9,7 +9,8 @@
 <AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="fein.MainWindow" stylesheets="@../css/main.css">
     <children>
-        <TextField fx:id="userInput" prefHeight="41.0" promptText="Enter a Fein command"
+        <TextField fx:id="userInput" prefHeight="41.0"
+                   promptText="Try: todo buy milk, help for more info, or bye to exit"
                    AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="1.0"
                    AnchorPane.rightAnchor="78.0" onAction="#handleUserInput" />
         <Button fx:id="sendButton" mnemonicParsing="false" onAction="#handleUserInput"
