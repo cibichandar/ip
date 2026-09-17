@@ -102,6 +102,9 @@ public class Fein {
             if (normalizedCommand.isEmpty()) {
                 return EMPTY_COMMAND_MESSAGE;
             }
+            if (hasRepeatedWhitespace(normalizedCommand)) {
+                return "Please use a single space between words, for example: `todo buy milk`.";
+            }
             if (normalizedCommand.equals("bye")) {
                 commandType = "bye";
                 return "Bye! Keeping feining and stay LIT!";
@@ -175,6 +178,11 @@ public class Fein {
         return response.toString();
     }
 
+    /** Returns whether a command contains adjacent whitespace characters between its words. */
+    private boolean hasRepeatedWhitespace(String command) {
+        return command.matches(".*\\s{2,}.*");
+    }
+
     /** Runs Fein until the user enters {@code bye} or closes input. */
     public void run() {
         ui.showWelcome();
@@ -202,6 +210,9 @@ public class Fein {
         if (command.trim().isEmpty()) {
             ui.showMessage(EMPTY_COMMAND_MESSAGE);
             return;
+        }
+        if (hasRepeatedWhitespace(command)) {
+            throw new FeinException("Please use a single space between words, for example: `todo buy milk`.");
         }
         if (command.equals("list")) {
             ui.showTasks(tasks);

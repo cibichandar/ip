@@ -19,6 +19,58 @@ Copy the following template for each real test case (remove the indentation):
     ```
 ```
 
+## Test case: reject malformed task data
+
+**Aim:** Verify that Fein rejects repeated spaces, invalid dates, malformed markers, and save-file separators.
+**Command:** `mkdir -p /tmp/fein-ui-errors/data /tmp/fein-ui-build && rm -f /tmp/fein-ui-errors/data/fein.txt && javac -d /tmp/fein-ui-build $(find src/main/java/fein -name '*.java' ! -name 'Main.java' ! -name 'Launcher.java' ! -name 'MainWindow.java' ! -name 'DialogBox.java') && cd /tmp/fein-ui-errors && java -cp /tmp/fein-ui-build fein.Fein`
+**Inputs:**
+```text
+todo buy    milk
+deadline submit report /by 31/6/2026
+event workshop /from 2/12/2026 1800 /to 2/12/2026 1700
+todo buy | milk
+deadline submit report /by Friday /by Saturday
+event workshop /to 4pm /from 2pm
+bye
+```
+**Expected output:**
+```text
+____________________________________________________________________________________________________
+oooooooooooo           o8o                     
+`888'     `8           `"'                     
+ 888          .ooooo.  oooo  ooo. .oo.         
+ 888oooo8    d88' `88b `888  `888P"Y88b        
+ 888    "    888ooo888  888   888   888        
+ 888         888    .o  888   888   888        
+o888o        `Y8bod8P' o888o o888o o888o       
+
+Hello! I'm Fein.
+What can I do for you?
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Please use a single space between words, for example: `todo buy milk`.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ The due date is not a valid date and time. Try `2/12/2026 1800`.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ The event end time must be after the start time.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ A task description cannot contain `|`. Please use another character.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Use `/by` only once for a deadline.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Place `/from` before `/to` in an event.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Bye! Keeping feining and stay LIT!
+____________________________________________________________________________________________________
+
+```
+
 ## Test case: delete task and renumber remaining tasks
 
 **Aim:** Verify that deleting a task removes it, shifts later tasks forward, and updates the task count.

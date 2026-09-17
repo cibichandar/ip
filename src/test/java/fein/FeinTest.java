@@ -47,6 +47,16 @@ class FeinTest {
         assertEquals("error", fein.getCommandType());
     }
 
+    /** Verifies that repeated spaces between command words are rejected. */
+    @Test
+    void getResponseRejectsRepeatedWhitespace(@TempDir Path temporaryDirectory) {
+        Fein fein = new Fein(temporaryDirectory.resolve("fein.txt").toString());
+
+        assertEquals("Please use a single space between words, for example: `todo buy milk`.",
+                fein.getResponse("todo buy    milk"));
+        assertEquals("error", fein.getCommandType());
+    }
+
     /** Verifies that help explains every available core command and its intended use. */
     @Test
     void getResponseExplainsAllCoreCommands(@TempDir Path temporaryDirectory) {

@@ -1,5 +1,7 @@
 package fein;
 
+import java.time.LocalDateTime;
+
 import fein.task.Deadline;
 import fein.task.Event;
 import fein.task.Task;
@@ -30,6 +32,7 @@ public class Parser {
             throw new FeinException("Tell me what you would like to remember. "
                     + "Try `todo buy milk` or `bye`.");
         }
+        validateTaskText(description, "task description");
         return new Todo(description);
     }
 
@@ -46,6 +49,9 @@ public class Parser {
             throw new FeinException("Almost there - add a due date, for example: "
                     + "`deadline submit report /by Friday`.");
         }
+        if (remainder.indexOf(" /by", separator + 1) >= 0) {
+            throw new FeinException("Use `/by` only once for a deadline.");
+        }
         String description = remainder.substring(0, separator).trim();
         String by = remainder.substring(separator + " /by".length()).trim();
         if (description.isEmpty()) {
@@ -56,6 +62,9 @@ public class Parser {
             throw new FeinException("Add a date after `/by`, for example: "
                     + "`deadline submit report /by Friday`.");
         }
+        validateTaskText(description, "task description");
+        validateTaskText(by, "due date");
+        validateDateTime(by, "due date");
         return new Deadline(description, by);
     }
 
@@ -77,6 +86,13 @@ public class Parser {
             throw new FeinException("Add a start and end time, for example: "
                     + "`event team meeting /from Mon 2pm /to 4pm`.");
         }
+        if (toSeparator < fromSeparator) {
+            throw new FeinException("Place `/from` before `/to` in an event.");
+        }
+        if (remainder.indexOf(" /from", fromSeparator + 1) >= 0
+                || remainder.indexOf(" /to", toSeparator + 1) >= 0) {
+            throw new FeinException("Use `/from` and `/to` only once for an event.");
+        }
         String description = remainder.substring(0, fromSeparator).trim();
         String from = remainder.substring(fromSeparator + " /from".length(), toSeparator).trim();
         String to = remainder.substring(toSeparator + " /to".length()).trim();
@@ -92,7 +108,37 @@ public class Parser {
             throw new FeinException("Add an end time after `/to`, for example: "
                     + "`event team meeting /from Mon 2pm /to 4pm`.");
         }
+        validateTaskText(description, "event description");
+        validateTaskText(from, "start time");
+        validateTaskText(to, "end time");
+        validateDateTime(from, "start time");
+        validateDateTime(to, "end time");
+        validateEventOrder(from, to);
         return new Event(description, from, to);
+    }
+
+    /** Rejects text that would interfere with Fein's line-based save-file format. */
+    private void validateTaskText(String value, String fieldName) throws FeinException {
+        if (value.contains("|")) {
+            throw new FeinException("A " + fieldName + " cannot contain `|`. Please use another character.");
+        }
+    }
+
+    /** Rejects a date-looking value when it is not a real date and time. */
+    private void validateDateTime(String value, String fieldName) throws FeinException {
+        if (DateTimeParser.resemblesDateTime(value) && !DateTimeParser.isValidDateTime(value)) {
+            throw new FeinException("The " + fieldName + " is not a valid date and time. "
+                    + "Try `2/12/2026 1800`.");
+        }
+    }
+
+    /** Rejects numeric event times when the end is not after the start. */
+    private void validateEventOrder(String from, String to) throws FeinException {
+        LocalDateTime start = DateTimeParser.parse(from);
+        LocalDateTime end = DateTimeParser.parse(to);
+        if (start != null && end != null && !end.isAfter(start)) {
+            throw new FeinException("The event end time must be after the start time.");
+        }
     }
 
     /** Returns the text after a command keyword. */
