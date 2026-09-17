@@ -56,4 +56,15 @@ class FeinTest {
         assertTrue(helpResponse.contains("\nbye\nPurpose: Exit Fein."));
         assertEquals("help", fein.getCommandType());
     }
+
+    /** Verifies that the graphical command path reports duplicate tasks without adding them. */
+    @Test
+    void getResponseRejectsDuplicateTasks(@TempDir Path temporaryDirectory) {
+        Fein fein = new Fein(temporaryDirectory.resolve("fein.txt").toString());
+
+        assertTrue(fein.getResponse("todo buy milk").contains("buy milk"));
+        assertEquals("That task is already on your list. Try `list` to check it.",
+                fein.getResponse("todo Buy Milk"));
+        assertEquals("error", fein.getCommandType());
+    }
 }

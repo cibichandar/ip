@@ -31,6 +31,16 @@ public class Deadline extends Task {
         return by == null ? originalBy : DateTimeParser.format(by);
     }
 
+    /** Returns whether another deadline has the same description and due date as this deadline. */
+    @Override
+    public boolean hasSameDetailsAs(Task other) {
+        if (!(other instanceof Deadline deadline)) {
+            return false;
+        }
+        return super.hasSameDetailsAs(deadline)
+                && getByText().equalsIgnoreCase(deadline.getByText());
+    }
+
     /** Returns this deadline with its type and deadline markers. */
     @Override
     public String toString() {

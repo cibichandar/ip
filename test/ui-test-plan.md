@@ -774,3 +774,46 @@ Bye. Hope to see you again soon!
 ____________________________________________________________________________________________________
 
 ```
+
+## Test case: reject a duplicate task
+
+**Aim:** Verify that Fein rejects a case-insensitive duplicate instead of saving it twice.
+**Command:** `mkdir -p /tmp/fein-ui-duplicates/data /tmp/fein-ui-build && rm -f /tmp/fein-ui-duplicates/data/fein.txt && javac -d /tmp/fein-ui-build $(find src/main/java/fein -name '*.java' ! -name 'Main.java' ! -name 'Launcher.java' ! -name 'MainWindow.java' ! -name 'DialogBox.java') && cd /tmp/fein-ui-duplicates && java -cp /tmp/fein-ui-build fein.Fein`
+**Inputs:**
+```text
+todo buy milk
+todo Buy Milk
+list
+bye
+```
+**Expected output:**
+```text
+____________________________________________________________________________________________________
+oooooooooooo           o8o                     
+`888'     `8           `"'                     
+ 888          .ooooo.  oooo  ooo. .oo.         
+ 888oooo8    d88' `88b `888  `888P"Y88b        
+ 888    "    888ooo888  888   888   888        
+ 888         888    .o  888   888   888        
+o888o        `Y8bod8P' o888o o888o o888o       
+
+Hello! I'm Fein.
+What can I do for you?
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Got it. I've added this task:
+   [T][ ] buy milk
+ Now you have 1 tasks in the list.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ That task is already on your list. Try `list` to check it.
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+ Here are the tasks in your list:
+ 1.[T][ ] buy milk
+____________________________________________________________________________________________________
+____________________________________________________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________________________________________________
+
+```
