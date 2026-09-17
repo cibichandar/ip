@@ -41,6 +41,14 @@ public class Task {
         return isDone;
     }
 
+    /** Returns whether another task has the same type and user-provided details as this task. */
+    public boolean hasSameDetailsAs(Task other) {
+        // Duplicate comparisons require two actual task instances.
+        assert other != null : "A duplicate comparison requires another task";
+        return getClass().equals(other.getClass())
+                && description.equalsIgnoreCase(other.description);
+    }
+
     /** Returns the common status-and-description representation of this task. */
     @Override
     public String toString() {

@@ -7,6 +7,52 @@ import fein.task.TaskList;
 
 /** Coordinates Fein's user interface, parser, task list, and storage. */
 public class Fein {
+    /** The in-app guide describing every command available in Fein. */
+    private static final String HELP_MESSAGE = String.join("\n",
+            "FEIN command list:",
+            "",
+            "todo <description>",
+            "Purpose: Add a task without a date or time.",
+            "Example: todo buy milk",
+            "",
+            "deadline <description> /by <due date>",
+            "Purpose: Add a task with a deadline.",
+            "Example: deadline submit report /by Friday",
+            "",
+            "event <description> /from <start> /to <end>",
+            "Purpose: Add a task with a start and end time.",
+            "Example: event team meeting /from 2pm /to 4pm",
+            "",
+            "find <keyword>",
+            "Purpose: Find tasks containing a word or phrase.",
+            "Example: find report",
+            "",
+            "mark <task number>",
+            "Purpose: Mark a task as completed.",
+            "Example: mark 1",
+            "",
+            "unmark <task number>",
+            "Purpose: Mark a completed task as not completed.",
+            "Example: unmark 1",
+            "",
+            "delete <task number>",
+            "Purpose: Remove a task from your list.",
+            "Example: delete 1",
+            "",
+            "Quick commands:",
+            "list",
+            "Purpose: Show all tasks in your list.",
+            "",
+            "help",
+            "Purpose: Show this command guide.",
+            "",
+            "bye",
+            "Purpose: Exit Fein.");
+
+    /** The guidance shown when no command was entered. */
+    private static final String EMPTY_COMMAND_MESSAGE = "Tell me what you would like to remember. "
+            + "Try `todo buy milk` or `bye`.";
+
     /** Handles command-line input and output. */
     private final Ui ui;
 
@@ -53,14 +99,24 @@ public class Fein {
         String normalizedCommand = command.trim();
         commandType = "error";
         try {
+            if (normalizedCommand.isEmpty()) {
+                return EMPTY_COMMAND_MESSAGE;
+            }
+            if (hasRepeatedWhitespace(normalizedCommand)) {
+                return "Please use a single space between words, for example: `todo buy milk`.";
+            }
             if (normalizedCommand.equals("bye")) {
                 commandType = "bye";
-                return "Bye. Hope to see you again soon!";
+                return "Bye! Keeping feining and stay LIT!";
+            }
+            if (normalizedCommand.equals("help")) {
+                commandType = "help";
+                return HELP_MESSAGE;
             }
             if (normalizedCommand.equals("list")) {
                 commandType = "list";
                 return formatTasks(tasks.asList(), "Here are the tasks in your list:",
-                        "Nothing on the list yet, Fein's waiting on you");
+                        "Your list is empty! Try adding a task with `todo <description>`.\nExample: todo buy milk");
             }
             if (normalizedCommand.equals("find") || normalizedCommand.startsWith("find ")) {
                 commandType = "find";
@@ -85,7 +141,7 @@ public class Fein {
                 Task task = tasks.delete(parser.parseTaskNumber(normalizedCommand, "delete"));
                 storage.save(tasks);
                 return "Noted. I've removed this task:\n" + task
-                        + "\nNow you have " + tasks.size() + " tasks in the list.";
+                        + "\nNow you have " + tasks.size() + " tasks in your list.";
             }
 
             Task task = parser.parseTask(normalizedCommand);
@@ -93,7 +149,7 @@ public class Fein {
             storage.save(tasks);
             commandType = "add";
             return "Got it. I've added this task:\n" + task
-                    + "\nNow you have " + tasks.size() + " tasks in the list.";
+                    + "\nNow you have " + tasks.size() + " tasks in your list.";
         } catch (FeinException exception) {
             commandType = "error";
             return exception.getMessage();
@@ -122,6 +178,11 @@ public class Fein {
         return response.toString();
     }
 
+    /** Returns whether a command contains adjacent whitespace characters between its words. */
+    private boolean hasRepeatedWhitespace(String command) {
+        return command.matches(".*\\s{2,}.*");
+    }
+
     /** Runs Fein until the user enters {@code bye} or closes input. */
     public void run() {
         ui.showWelcome();
@@ -146,8 +207,17 @@ public class Fein {
 
     /** Dispatches one command to the object responsible for that operation. */
     private void handleCommand(String command) throws FeinException {
+        if (command.trim().isEmpty()) {
+            ui.showMessage(EMPTY_COMMAND_MESSAGE);
+            return;
+        }
+        if (hasRepeatedWhitespace(command)) {
+            throw new FeinException("Please use a single space between words, for example: `todo buy milk`.");
+        }
         if (command.equals("list")) {
             ui.showTasks(tasks);
+        } else if (command.equals("help")) {
+            ui.showMessage(HELP_MESSAGE);
         } else if (command.equals("find") || command.startsWith("find ")) {
             String keyword = parser.parseFindKeyword(command);
             ui.showMatchingTasks(tasks.find(keyword));

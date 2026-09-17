@@ -50,7 +50,7 @@ public class Ui {
     /** Shows a task-list response. */
     public void showTasks(TaskList tasks) {
         showTaskList(tasks.asList(), "Here are the tasks in your list:",
-                "Nothing on the list yet, Fein's waiting on you");
+                "Your list is empty! Try adding a task with `todo <description>`.\nExample: todo buy milk");
     }
 
     /** Shows tasks whose descriptions match a search keyword. */
@@ -75,14 +75,14 @@ public class Ui {
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        System.out.println(" Now you have " + taskCount + " tasks in your list.");
     }
 
     /** Shows a successful task-deletion response. */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + task);
-        System.out.println(" Now you have " + taskCount + " tasks in the list.");
+        System.out.println(" Now you have " + taskCount + " tasks in your list.");
     }
 
     /** Shows a successful mark response. */
@@ -102,9 +102,14 @@ public class Ui {
         System.out.println(" " + message);
     }
 
+    /** Shows a general response produced by a non-task command. */
+    public void showMessage(String message) {
+        System.out.println(" " + message);
+    }
+
     /** Shows Fein's farewell. */
     public void showGoodbye() {
-        System.out.println("Bye. Hope to see you again soon!");
+        System.out.println("Bye! Keeping feining and stay LIT!");
         System.out.println(SEPARATOR);
     }
 }

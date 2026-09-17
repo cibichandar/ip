@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 /** Controls Fein's FXML-based chat window. */
 public class MainWindow extends AnchorPane {
     private static final String CHATBOT_IMAGE_PATH = "/images/travis_scott.png";
-    private static final String WELCOME_MESSAGE = "Hello! I'm Fein.\nWhat can I do for you?";
+    private static final String WELCOME_MESSAGE = "LET'S GET LIT!\nWhat's feining champ?";
 
     @FXML
     private ScrollPane scrollPane;
@@ -30,10 +30,10 @@ public class MainWindow extends AnchorPane {
     /** The application logic that parses and executes user commands. */
     private Fein fein;
 
-    /** The avatar displayed for Fein's responses. */
+    /** The compact avatar displayed beside Fein's replies. */
     private final Image feinImage;
 
-    /** Creates the controller and loads Fein's chatbot avatar. */
+    /** Creates the controller and loads Fein's avatar. */
     public MainWindow() {
         feinImage = new Image(Objects.requireNonNull(
                 MainWindow.class.getResourceAsStream(CHATBOT_IMAGE_PATH),
@@ -58,16 +58,12 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleUserInput() {
         String input = userInput.getText().trim();
-        if (input.isEmpty()) {
-            return;
-        }
-
         String response = fein.getResponse(input);
         String commandType = fein.getCommandType();
-        dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input, null),
-                DialogBox.getFeinDialog(response, feinImage, commandType)
-        );
+        if (!input.isEmpty()) {
+            dialogContainer.getChildren().add(DialogBox.getUserDialog(input));
+        }
+        dialogContainer.getChildren().add(DialogBox.getFeinDialog(response, feinImage, commandType));
         userInput.clear();
 
         if (commandType.equals("bye")) {

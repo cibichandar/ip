@@ -40,7 +40,7 @@ public class Storage {
             }
             return tasks;
         } catch (IOException | SecurityException exception) {
-            throw new FeinException("OOPS!!! Fein couldn't load your saved tasks");
+            throw new FeinException("Fein couldn't load your saved tasks. Starting with an empty list.");
         }
     }
 
@@ -59,7 +59,7 @@ public class Storage {
             }
             Files.writeString(taskFile, savedTasks.toString(), StandardCharsets.UTF_8);
         } catch (IOException | SecurityException exception) {
-            throw new FeinException("OOPS!!! Fein couldn't save your tasks");
+            throw new FeinException("Fein couldn't save your changes. Please try again.");
         }
     }
 

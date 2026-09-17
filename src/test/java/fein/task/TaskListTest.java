@@ -27,7 +27,7 @@ class TaskListTest {
 
     /** Verifies that zero and out-of-range task numbers are rejected. */
     @Test
-    void deleteInvalidTaskNumberThrowsException() {
+    void deleteInvalidTaskNumberThrowsException() throws FeinException {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("first"));
 
@@ -35,9 +35,23 @@ class TaskListTest {
         assertThrows(FeinException.class, () -> tasks.delete(2));
     }
 
+    /** Verifies that tasks with matching type and details cannot be added more than once. */
+    @Test
+    void addRejectsDuplicateTasks() throws FeinException {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("Buy milk"));
+        tasks.add(new Deadline("Submit report", "Friday"));
+        tasks.add(new Event("Team meeting", "2pm", "4pm"));
+
+        assertThrows(FeinException.class, () -> tasks.add(new Todo("buy milk")));
+        assertThrows(FeinException.class, () -> tasks.add(new Deadline("submit report", "friday")));
+        assertThrows(FeinException.class, () -> tasks.add(new Event("team meeting", "2PM", "4PM")));
+        assertEquals(3, tasks.size());
+    }
+
     /** Verifies that find matches descriptions case-insensitively without reordering tasks. */
     @Test
-    void findReturnsMatchingTasksInOriginalOrder() {
+    void findReturnsMatchingTasksInOriginalOrder() throws FeinException {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("Read book"));
         tasks.add(new Todo("Attend class"));
@@ -47,4 +61,5 @@ class TaskListTest {
         assertEquals("Return BOOK", tasks.find("book").get(1).getDescription());
         assertEquals(2, tasks.find("book").size());
     }
+
 }

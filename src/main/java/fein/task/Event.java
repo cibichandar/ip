@@ -28,6 +28,17 @@ public class Event extends Task {
         return to;
     }
 
+    /** Returns whether another event has the same description and time range as this event. */
+    @Override
+    public boolean hasSameDetailsAs(Task other) {
+        if (!(other instanceof Event event)) {
+            return false;
+        }
+        return super.hasSameDetailsAs(event)
+                && from.equalsIgnoreCase(event.from)
+                && to.equalsIgnoreCase(event.to);
+    }
+
     /** Returns this event with its type and time-range markers. */
     @Override
     public String toString() {

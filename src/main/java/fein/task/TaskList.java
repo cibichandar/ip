@@ -26,10 +26,15 @@ public class TaskList {
         tasks = new ArrayList<>(initialTasks);
     }
 
-    /** Adds a task to the list. */
-    public void add(Task task) {
+    /** Adds a task to the list unless it duplicates an existing task. */
+    public void add(Task task) throws FeinException {
         // Null entries would break display, searching, and persistence invariants.
         assert task != null : "A task list must not contain null tasks";
+        for (Task existingTask : tasks) {
+            if (existingTask.hasSameDetailsAs(task)) {
+                throw new FeinException("That task is already on your list. Try `list` to check it.");
+            }
+        }
         tasks.add(task);
     }
 
@@ -103,11 +108,11 @@ public class TaskList {
     /** Checks that a one-based task number refers to an existing task. */
     private void validateTaskNumber(int taskNumber) throws FeinException {
         if (taskNumber <= 0) {
-            throw new FeinException("OOPS!!! Task numbers start from 1, not 0");
+            throw new FeinException("Task numbers start at 1. Try `list` to check the task number.");
         }
         if (taskNumber > tasks.size()) {
-            throw new FeinException("OOPS!!! Task " + taskNumber
-                    + " don't exist, check your list again");
+            throw new FeinException("I couldn't find task " + taskNumber
+                    + ". Try `list` to check the task number.");
         }
     }
 }
